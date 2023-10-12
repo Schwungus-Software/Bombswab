@@ -2,10 +2,10 @@
 #include "spritesheet.hpp"
 
 int main(int argc, char* argv[]) {
-  const int screenWidth = 800;
-  const int screenHeight = 600;
+  const int screen_width = 800;
+  const int screen_height = 600;
 
-  RL::InitWindow(screenWidth, screenHeight, "Bashar Quest");
+  RL::InitWindow(screen_width, screen_height, "Bashar Quest");
   RL::SetTargetFPS(60);
 
   while (!RL::WindowShouldClose()) {
