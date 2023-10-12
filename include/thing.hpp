@@ -5,11 +5,19 @@
 
 #include "spritesheet.hpp"
 
+enum class Direction {
+  LEFT,
+  RIGHT,
+  UP,
+  DOWN,
+};
+
 class Action;
 
 class Thing {
   public:
     int x, y;
+    Direction dir;
     std::unique_ptr<Action> ongoing;
 
     Thing(int, int);

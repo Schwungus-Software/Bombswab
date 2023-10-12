@@ -16,4 +16,6 @@ void Move::perform(Thing& actor) {
     actor.y++;
     break;
   }
+
+  actor.dir = dir;
 }
