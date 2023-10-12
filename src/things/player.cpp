@@ -9,7 +9,7 @@ Player::Player(int x, int y) : Thing(x, y) {
 }
 
 void Player::think() {
-  const int length = 5;
+  const int length = 8;
   Move* next = nullptr;
 
   if (RL::IsKeyDown(RL::KEY_LEFT)) {
