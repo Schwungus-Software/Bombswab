@@ -6,6 +6,9 @@
 #error Could you please remove #include "raylib.h"?
 #endif
 
+// Fixes an EXTREMELY weird error related to __gnu_va_args or alike.
+#include <stdarg.h>
+
 namespace RL {
 extern "C" {
 #include "raylib.h"
