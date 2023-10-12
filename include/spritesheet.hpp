@@ -15,4 +15,12 @@ enum class Sprite {
   MAX,
 };
 
-void draw(Sprite, RL::Vector2, RL::Color = RL::WHITE);
+struct TintedSprite {
+    Sprite idx;
+    RL::Color tint;
+
+    TintedSprite(const Sprite& idx, RL::Color tint) : idx(idx), tint(tint) {}
+    TintedSprite(const Sprite& idx) : TintedSprite(idx, RL::WHITE) {}
+};
+
+void draw(TintedSprite, RL::Vector2);

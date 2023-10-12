@@ -24,4 +24,6 @@ void Player::think() {
   }
 }
 
-std::vector<Sprite> Player::draw() { return {Sprite::MAN, Sprite::GUN}; }
+std::vector<TintedSprite> Player::draw() {
+  return {{Sprite::MAN, RL::BLUE}, Sprite::GUN};
+}

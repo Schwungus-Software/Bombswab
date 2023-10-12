@@ -7,5 +7,5 @@ class Player : public Thing {
     Player(int, int);
 
     void think() override;
-    std::vector<Sprite> draw() override;
+    std::vector<TintedSprite> draw() override;
 };

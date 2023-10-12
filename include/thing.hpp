@@ -17,7 +17,7 @@ class Thing {
     void tick();
 
     virtual void think() = 0;
-    virtual std::vector<Sprite> draw() = 0;
+    virtual std::vector<TintedSprite> draw() = 0;
 
     virtual ~Thing() = default;
 };
