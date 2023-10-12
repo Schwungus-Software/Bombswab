@@ -4,7 +4,9 @@ add_subdirectory(external/raylib)
 
 project(BasharQuest)
 
-add_executable(BasharQuest "src/main.cpp")
+file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}")
+
+add_executable(BasharQuest "src/main.cpp" "src/spritesheet.cpp")
 
 set_target_properties(BasharQuest PROPERTIES CXX_STANDARD 23
                                              CXX_STANDARD_REQUIRED ON)
