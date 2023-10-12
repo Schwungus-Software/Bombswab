@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "spritesheet.hpp"
+#include "audio.hpp"
 
 enum class Direction {
   LEFT,
@@ -28,6 +29,11 @@ class Thing {
     virtual std::vector<TintedSprite> draw() = 0;
 
     virtual ~Thing() = default;
+
+    void play_sound(RL::Sound);
+    void play_sound_local(RL::Sound);
+
+    virtual void step() = 0;
 };
 
 class Action {

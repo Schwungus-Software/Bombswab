@@ -11,6 +11,14 @@ void Thing::tick() {
   }
 }
 
+void Thing::play_sound(RL::Sound snd) {
+    PlaySound(snd);
+}
+
+void Thing::play_sound_local(RL::Sound snd) {
+    play_sound(snd);
+}
+
 void Action::tick(Thing& actor) {
   if (length-- == 1) {
     perform(actor);
