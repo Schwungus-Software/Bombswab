@@ -1,0 +1,6 @@
+Language: Cpp
+BasedOnStyle: LLVM
+DerivePointerAlignment: false
+PointerAlignment: Left
+AccessModifierOffset: -2
+IndentAccessModifiers: true
