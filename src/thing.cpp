@@ -1,6 +1,8 @@
 #include "thing.hpp"
 
-Thing::Thing(int x, int y) : x(x), y(y) { ongoing = std::make_unique<Noop>(); }
+Thing::Thing(int x, int y) : x(x), y(y), deletion_mark(false) {
+  ongoing = std::make_unique<Noop>();
+}
 
 void Thing::tick() {
   ongoing->tick(*this);

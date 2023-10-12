@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <memory>
 #include <vector>
 
@@ -6,6 +7,9 @@
 #include "thing.hpp"
 #include "things.hpp"
 
+std::vector<std::unique_ptr<Thing>> things;
+std::vector<std::unique_ptr<Thing>> spawn_queue;
+
 int main(int argc, char* argv[]) {
   const int screen_width = 800;
   const int screen_height = 600;
@@ -13,7 +17,6 @@ int main(int argc, char* argv[]) {
   RL::InitWindow(screen_width, screen_height, "Bashar Quest");
   RL::SetTargetFPS(60);
 
-  std::vector<std::unique_ptr<Thing>> things;
   things.push_back(std::make_unique<Player>(10, 10));
 
   while (!RL::WindowShouldClose()) {
@@ -31,6 +34,15 @@ int main(int argc, char* argv[]) {
           const auto y = static_cast<float>(thing->y);
           draw(layer, {x, y});
         }
+      }
+
+      std::erase_if(things,
+                    [](const auto& thing) { return thing->deletion_mark; });
+
+      // TODO: revise when the time comes.
+      while (!spawn_queue.empty()) {
+        things.push_back(std::move(spawn_queue.back()));
+        spawn_queue.pop_back();
       }
     }
     RL::EndDrawing();

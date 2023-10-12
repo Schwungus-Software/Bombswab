@@ -20,6 +20,8 @@ class Thing {
     Direction dir;
     std::unique_ptr<Action> ongoing;
 
+    bool deletion_mark;
+
     Thing(int, int);
 
     void tick();

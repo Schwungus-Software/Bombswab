@@ -14,3 +14,6 @@ extern "C" {
 #include "raylib.h"
 }
 } // namespace RL
+
+// Prevent further re-includes.
+#define RAYLIB_H

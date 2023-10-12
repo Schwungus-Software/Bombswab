@@ -6,8 +6,17 @@ project(BasharQuest)
 
 file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}")
 
-add_executable(BasharQuest "src/main.cpp" "src/spritesheet.cpp" "src/thing.cpp"
-                           "src/actions/move.cpp" "src/things/player.cpp")
+add_executable(
+  BasharQuest
+  "src/main.cpp"
+  "src/spritesheet.cpp"
+  "src/thing.cpp"
+  "src/grid.cpp"
+  "src/actions/die.cpp"
+  "src/actions/move.cpp"
+  "src/actions/shoot.cpp"
+  "src/things/player.cpp"
+  "src/things/bullet.cpp")
 
 set_target_properties(BasharQuest PROPERTIES CXX_STANDARD 23
                                              CXX_STANDARD_REQUIRED ON)
