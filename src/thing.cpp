@@ -1,6 +1,6 @@
 #include "thing.hpp"
 
-Thing::Thing(int x, int y) : x(x), y(y), deletion_mark(false) {
+Thing::Thing(int x, int y) : x(x), y(y), deletion_mark(false), stepped(false) {
   ongoing = std::make_unique<Noop>();
 }
 
@@ -12,6 +12,10 @@ void Thing::tick() {
     think();
   }
 }
+
+void Thing::play_sound(RL::Sound snd) { PlaySound(snd); }
+
+void Thing::play_sound_local(RL::Sound snd) { play_sound(snd); }
 
 void Action::tick(Thing& actor) {
   if (length-- == 1) {

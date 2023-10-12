@@ -4,6 +4,7 @@
 
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
+#include "audio.hpp"
 #include "thing.hpp"
 #include "things.hpp"
 
@@ -16,6 +17,9 @@ int main(int argc, char* argv[]) {
 
   RL::InitWindow(screen_width, screen_height, "Bashar Quest");
   RL::SetTargetFPS(60);
+  RL::InitAudioDevice();
+
+  load_sounds();
 
   things.push_back(std::make_unique<Player>(10, 10));
 
@@ -48,6 +52,7 @@ int main(int argc, char* argv[]) {
     RL::EndDrawing();
   }
 
+  RL::CloseAudioDevice();
   RL::CloseWindow();
 
   return 0;

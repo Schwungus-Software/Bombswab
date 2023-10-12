@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 
+#include "audio.hpp"
 #include "spritesheet.hpp"
 
 enum class Direction {
@@ -22,6 +23,8 @@ class Thing {
 
     bool deletion_mark;
 
+    bool stepped;
+
     Thing(int, int);
 
     void tick();
@@ -30,6 +33,11 @@ class Thing {
     virtual std::vector<TintedSprite> draw() = 0;
 
     virtual ~Thing() = default;
+
+    void play_sound(RL::Sound);
+    void play_sound_local(RL::Sound);
+
+    virtual void step() {}
 };
 
 class Action {

@@ -12,6 +12,7 @@ add_executable(
   "src/spritesheet.cpp"
   "src/thing.cpp"
   "src/grid.cpp"
+  "src/audio.cpp"
   "src/actions/die.cpp"
   "src/actions/move.cpp"
   "src/actions/shoot.cpp"

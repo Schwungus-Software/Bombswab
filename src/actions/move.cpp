@@ -18,4 +18,5 @@ void Move::perform(Thing& actor) {
   }
 
   actor.dir = dir;
+  actor.step();
 }

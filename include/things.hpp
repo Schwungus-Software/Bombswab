@@ -11,6 +11,8 @@ class Player : public Thing {
 
     void think() override;
     std::vector<TintedSprite> draw() override;
+
+    void step() override;
 };
 
 class Bullet : public Thing {
