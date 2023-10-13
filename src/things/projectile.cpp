@@ -3,10 +3,26 @@
 #include "spritesheet.hpp"
 #include "things.hpp"
 
-void Projectile::think() {
-  if (--range == 0 || cur_point == trajectory.size()) {
+void Projectile::act() {
+  if (--range == 0 || cur_point + 1 == trajectory.size()) {
+    const auto collision = collide_at(true);
+
+    if (collision != nullptr) {
+      collision->damage(damage);
+    }
+
     ongoing.reset(new Die);
   } else {
+    for (const auto& thing : things) {
+      if (collides_with(*thing)) {
+        thing->damage(damage);
+
+        if (Thing::damage(damage)) {
+          return;
+        }
+      }
+    }
+
     const auto dest = trajectory[cur_point++];
 
     Move* next = nullptr;

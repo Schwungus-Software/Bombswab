@@ -4,7 +4,7 @@
 #include "rlwrap.hpp"
 #include "things.hpp"
 
-void Player::think() {
+void Player::act() {
   const int length = 8;
 
   if (RL::IsMouseButtonPressed(RL::MOUSE_BUTTON_LEFT)) {

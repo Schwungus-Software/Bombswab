@@ -18,7 +18,9 @@ add_executable(
   "src/actions/move.cpp"
   "src/actions/shoot.cpp"
   "src/things/player.cpp"
-  "src/things/projectile.cpp")
+  "src/things/enemy.cpp"
+  "src/things/projectile.cpp"
+  "src/things/misc.cpp")
 
 set_target_properties(BasharQuest PROPERTIES CXX_STANDARD 23
                                              CXX_STANDARD_REQUIRED ON)

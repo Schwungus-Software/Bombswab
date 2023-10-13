@@ -17,13 +17,12 @@ std::vector<Point> rasterize(Point start, Point end) {
   const auto y_dir = dy == 0 ? 0 : (end.y - start.y) / dy;
 
   auto x = start.x, y = start.y;
-  result.push_back(start);
 
   if (dy <= dx) {
     auto steps = dx;
     auto d = dy - (dx / 2);
 
-    while (steps-- > 0) {
+    while (steps-- >= 0) {
       x += x_dir;
 
       if (d < 0) {
@@ -41,7 +40,7 @@ std::vector<Point> rasterize(Point start, Point end) {
     auto steps = dy;
     auto d = dx - (dy / 2);
 
-    while (steps-- > 0) {
+    while (steps-- >= 0) {
       y += y_dir;
 
       if (d < 0) {

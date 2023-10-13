@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include "audio.hpp"
@@ -17,27 +18,56 @@ class Action;
 
 class Thing {
   public:
+    // Movement.
+
     int x, y;
     Direction dir;
+
+    // Actions.
+
     std::unique_ptr<Action> ongoing;
 
-    bool deletion_mark;
+    // Health.
 
+    int max_health, cur_health;
+
+    // Main flags.
+
+    // Ignored in collision detection. This can still be bypassed.
+    bool ghost;
+
+    // Misc. flags.
+
+    bool deletion_mark;
     bool stepped;
 
     Thing(int, int);
 
     void tick();
 
-    virtual void think() = 0;
+    /// Called every turn.
+    virtual void think() {}
+
+    /// Called every time an action can be taken.
+    virtual void act() {}
+
+    // Draw this thing in multiple layers.
     virtual std::vector<TintedSprite> draw() = 0;
 
-    virtual ~Thing() = default;
+    /// Deal damage and return `true` if it was fatal.
+    bool damage(int);
+
+    bool collides_with(const Thing&, bool = false);
+    Thing* collide_at(bool = false);
 
     void play_sound(RL::Sound);
     void play_sound_local(RL::Sound);
 
     virtual void step() {}
+
+    virtual void before_death() {}
+
+    virtual ~Thing() = default;
 };
 
 class Action {

@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "audio.hpp"
+#include "raylib.h"
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
 #include "thing.hpp"
@@ -21,7 +22,20 @@ int main(int argc, char* argv[]) {
 
   load_sounds();
 
-  things.push_back(std::make_unique<Player>(10, 10));
+  auto player = std::make_unique<Player>(14, 14);
+  player->max_health = 100;
+  player->cur_health = player->max_health;
+  things.push_back(std::move(player));
+
+  for (int enemy_count = 10; enemy_count > 0; enemy_count--) {
+    const auto x = RL::GetRandomValue(0, 29);
+    const auto y = RL::GetRandomValue(0, 29);
+
+    auto enemy = std::make_unique<Enemy>(x, y);
+    enemy->max_health = 20;
+    enemy->cur_health = enemy->max_health;
+    things.push_back(std::move(enemy));
+  }
 
   while (!RL::WindowShouldClose()) {
     RL::BeginDrawing();
