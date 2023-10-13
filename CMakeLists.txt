@@ -13,11 +13,12 @@ add_executable(
   "src/thing.cpp"
   "src/grid.cpp"
   "src/audio.cpp"
+  "src/line.cpp"
   "src/actions/die.cpp"
   "src/actions/move.cpp"
   "src/actions/shoot.cpp"
   "src/things/player.cpp"
-  "src/things/bullet.cpp")
+  "src/things/projectile.cpp")
 
 set_target_properties(BasharQuest PROPERTIES CXX_STANDARD 23
                                              CXX_STANDARD_REQUIRED ON)

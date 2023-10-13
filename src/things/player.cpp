@@ -6,11 +6,10 @@
 
 void Player::think() {
   const int length = 8;
-  const int range = 30;
 
-  if (RL::IsMouseButtonDown(RL::MOUSE_BUTTON_LEFT)) {
+  if (RL::IsMouseButtonPressed(RL::MOUSE_BUTTON_LEFT)) {
     const auto dir = mouse_to_grid();
-    ongoing.reset(new Shoot(dir.x, dir.y, new Bullet(0, 0, range)));
+    ongoing.reset(new Shoot(new Bullet(dir.x, dir.y)));
   } else if (RL::IsKeyDown(RL::KEY_LEFT)) {
     ongoing.reset(new Move(Direction::LEFT, length));
   } else if (RL::IsKeyDown(RL::KEY_RIGHT)) {

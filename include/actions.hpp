@@ -1,4 +1,4 @@
-#include "thing.hpp"
+#include "things.hpp"
 
 class Die : public Action {
   public:
@@ -18,11 +18,9 @@ class Move : public Action {
 
 class Shoot : public Action {
   public:
-    int x, y;
-    std::unique_ptr<Thing> projectile;
+    std::unique_ptr<Projectile> projectile;
 
-    Shoot(int x, int y, Thing* projectile)
-        : Action(1), x(x), y(y), projectile(projectile) {}
+    Shoot(Projectile* projectile) : Action(1), projectile(projectile) {}
 
     void perform(Thing&) override;
 };

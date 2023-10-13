@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 
+#include "audio.hpp"
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
-#include "audio.hpp"
 #include "thing.hpp"
 #include "things.hpp"
 
@@ -40,14 +40,14 @@ int main(int argc, char* argv[]) {
         }
       }
 
-      std::erase_if(things,
-                    [](const auto& thing) { return thing->deletion_mark; });
-
       // TODO: revise when the time comes.
       while (!spawn_queue.empty()) {
         things.push_back(std::move(spawn_queue.back()));
         spawn_queue.pop_back();
       }
+
+      std::erase_if(things,
+                    [](const auto& thing) { return thing->deletion_mark; });
     }
     RL::EndDrawing();
   }
