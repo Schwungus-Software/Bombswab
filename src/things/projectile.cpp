@@ -44,6 +44,5 @@ void Projectile::act() {
 }
 
 std::vector<TintedSprite> Bullet::draw() {
-  // TODO: create a bullet sprite.
-  return {Sprite::ROCKET};
+  return {Sprite::BULLET};
 }

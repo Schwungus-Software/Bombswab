@@ -12,6 +12,7 @@ enum class Sprite {
   GUN,
   SHOTGUN,
   ROCKET,
+  BULLET,
   MAX,
 };
 

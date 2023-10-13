@@ -10,4 +10,5 @@ void Shoot::perform(Thing& actor) {
   projectile->y = projectile->trajectory[1].y;
 
   spawn_queue.push_back(std::move(projectile));
+  actor.play_sound_local(rifle_fire);
 }
