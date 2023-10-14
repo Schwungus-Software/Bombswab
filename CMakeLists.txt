@@ -22,7 +22,7 @@ add_executable(
   "src/things/projectile.cpp"
   "src/things/misc.cpp")
 
-set_target_properties(BasharQuest PROPERTIES CXX_STANDARD 23
+set_target_properties(BasharQuest PROPERTIES CXX_STANDARD 20
                                              CXX_STANDARD_REQUIRED ON)
 
 target_include_directories(BasharQuest PRIVATE include "external/raylib/src")

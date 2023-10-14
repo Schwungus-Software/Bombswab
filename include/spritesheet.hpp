@@ -3,11 +3,16 @@
 #include "rlwrap.hpp"
 
 const int SPRITE_DIM = 16;
-const int SPRITESHEET_WIDTH = 16;
+
+// TODO: update every time a new sprite is added until this reaches 16.
+const int SPRITESHEET_WIDTH = 6;
 
 /// Sprite indices inside the spritesheet. Update after changing the PNG.
-enum class Sprite {
-  MAN = 0,
+///
+/// Tip: negate to flip horizontally.
+enum Sprite {
+  MIN = 0,
+  MAN,
   CORPSE,
   GUN,
   SHOTGUN,
@@ -17,11 +22,12 @@ enum class Sprite {
 };
 
 struct TintedSprite {
-    Sprite idx;
+    int sprite_idx;
     RL::Color tint;
 
-    TintedSprite(const Sprite& idx, RL::Color tint) : idx(idx), tint(tint) {}
-    TintedSprite(const Sprite& idx) : TintedSprite(idx, RL::WHITE) {}
+    TintedSprite(const int& idx, RL::Color tint)
+        : sprite_idx(idx), tint(tint) {}
+    TintedSprite(const int& idx) : TintedSprite(idx, RL::WHITE) {}
 };
 
 void draw(TintedSprite, RL::Vector2);

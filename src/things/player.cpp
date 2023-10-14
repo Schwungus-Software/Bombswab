@@ -22,7 +22,9 @@ void Player::act() {
 }
 
 std::vector<TintedSprite> Player::draw() {
-  return {{Sprite::MAN, RL::BLUE}, Sprite::GUN};
+  // TODO: flip correctly when going up/down too.
+  const auto gun = dir == Direction::LEFT ? -Sprite::GUN : Sprite::GUN;
+  return {{Sprite::MAN, RL::BLUE}, gun};
 }
 
 void Player::step() {
