@@ -43,6 +43,4 @@ void Projectile::act() {
   }
 }
 
-std::vector<TintedSprite> Bullet::draw() {
-  return {Sprite::BULLET};
-}
+std::vector<TintedSprite> Bullet::draw() { return {Sprite::BULLET}; }
