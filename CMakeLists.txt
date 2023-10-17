@@ -17,8 +17,7 @@ add_executable(
   "src/actions/die.cpp"
   "src/actions/move.cpp"
   "src/actions/shoot.cpp"
-  "src/things/player.cpp"
-  "src/things/enemy.cpp"
+  "src/things/humanoid.cpp"
   "src/things/projectile.cpp"
   "src/things/misc.cpp")
 

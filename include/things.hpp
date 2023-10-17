@@ -6,26 +6,32 @@
 extern std::vector<std::unique_ptr<Thing>> things;
 extern std::vector<std::unique_ptr<Thing>> spawn_queue;
 
-class Player : public Thing {
+class Humanoid : public Thing {
   public:
-    Player(int x, int y) : Thing(x, y) {}
+    RL::Color body_color;
 
-    void act() override;
+    Humanoid(int x, int y, RL::Color body_color)
+        : Thing(x, y), body_color(body_color) {}
+
     std::vector<TintedSprite> draw() override;
 
     void step() override;
-};
-
-class Enemy : public Thing {
-  public:
-    Enemy(int x, int y) : Thing(x, y) {}
-
-    void act() override;
-    std::vector<TintedSprite> draw() override;
-
-    // TODO: override `step`.
 
     void before_death() override;
+};
+
+class Player : public Humanoid {
+  public:
+    Player(int x, int y) : Humanoid(x, y, RL::BLUE) {}
+
+    void act() override;
+};
+
+class Enemy : public Humanoid {
+  public:
+    Enemy(int x, int y) : Humanoid(x, y, RL::RED) {}
+
+    void act() override;
 };
 
 class Corpse : public Thing {
