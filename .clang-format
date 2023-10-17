@@ -1,6 +1,12 @@
 Language: Cpp
 BasedOnStyle: LLVM
+BreakBeforeBraces: Attach
+IndentWidth: 4
 DerivePointerAlignment: false
 PointerAlignment: Left
 AccessModifierOffset: -2
-IndentAccessModifiers: true
+IndentAccessModifiers: false
+AllowShortBlocksOnASingleLine: Empty
+FixNamespaceComments: true
+NamespaceIndentation: All
+IndentCaseLabels: true

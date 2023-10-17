@@ -8,10 +8,10 @@
 #include "spritesheet.hpp"
 
 enum class Direction {
-  LEFT,
-  RIGHT,
-  UP,
-  DOWN,
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
 };
 
 class Action;

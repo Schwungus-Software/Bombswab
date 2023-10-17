@@ -11,14 +11,14 @@ const int SPRITESHEET_WIDTH = 6;
 ///
 /// Tip: negate to flip horizontally.
 enum Sprite {
-  MIN = 0,
-  MAN,
-  CORPSE,
-  GUN,
-  SHOTGUN,
-  ROCKET,
-  BULLET,
-  MAX,
+    MIN = 0,
+    MAN,
+    CORPSE,
+    GUN,
+    SHOTGUN,
+    ROCKET,
+    BULLET,
+    MAX,
 };
 
 struct TintedSprite {

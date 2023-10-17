@@ -9,19 +9,19 @@ RL::Sound footstep6 = {0};
 RL::Sound rifle_fire = {0};
 
 void load_sounds() {
-  static bool ready = false;
+    static bool ready = false;
 
-  if (ready) {
-    return;
-  }
+    if (ready) {
+        return;
+    }
 
-  footstep1 = RL::LoadSound("assets/sounds/footstep1.wav");
-  footstep2 = RL::LoadSound("assets/sounds/footstep2.wav");
-  footstep3 = RL::LoadSound("assets/sounds/footstep3.wav");
-  footstep4 = RL::LoadSound("assets/sounds/footstep4.wav");
-  footstep5 = RL::LoadSound("assets/sounds/footstep5.wav");
-  footstep6 = RL::LoadSound("assets/sounds/footstep6.wav");
-  rifle_fire = RL::LoadSound("assets/sounds/rifle_fire.wav");
+    footstep1 = RL::LoadSound("assets/sounds/footstep1.wav");
+    footstep2 = RL::LoadSound("assets/sounds/footstep2.wav");
+    footstep3 = RL::LoadSound("assets/sounds/footstep3.wav");
+    footstep4 = RL::LoadSound("assets/sounds/footstep4.wav");
+    footstep5 = RL::LoadSound("assets/sounds/footstep5.wav");
+    footstep6 = RL::LoadSound("assets/sounds/footstep6.wav");
+    rifle_fire = RL::LoadSound("assets/sounds/rifle_fire.wav");
 
-  ready = true;
+    ready = true;
 }

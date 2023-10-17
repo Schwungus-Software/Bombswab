@@ -10,9 +10,7 @@
 #include <stdarg.h>
 
 namespace RL {
-extern "C" {
 #include "raylib.h"
-}
 } // namespace RL
 
 // Prevent further re-includes.
