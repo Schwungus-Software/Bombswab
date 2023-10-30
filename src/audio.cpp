@@ -7,6 +7,10 @@ RL::Sound footstep4 = {0};
 RL::Sound footstep5 = {0};
 RL::Sound footstep6 = {0};
 RL::Sound rifle_fire = {0};
+RL::Sound human_die = {0};
+RL::Sound explode1 = {0};
+RL::Sound explode2 = {0};
+RL::Sound explode3 = {0};
 
 void load_sounds() {
     static bool ready = false;
@@ -22,6 +26,10 @@ void load_sounds() {
     footstep5 = RL::LoadSound("assets/sounds/footstep5.wav");
     footstep6 = RL::LoadSound("assets/sounds/footstep6.wav");
     rifle_fire = RL::LoadSound("assets/sounds/rifle_fire.wav");
+    human_die = RL::LoadSound("assets/sounds/human_die.wav");
+    explode1 = RL::LoadSound("assets/sounds/explode1.wav");
+    explode2 = RL::LoadSound("assets/sounds/explode2.wav");
+    explode3 = RL::LoadSound("assets/sounds/explode3.wav");
 
     ready = true;
 }

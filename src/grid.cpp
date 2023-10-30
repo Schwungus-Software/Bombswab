@@ -2,6 +2,7 @@
 
 #include "grid.hpp"
 #include "spritesheet.hpp"
+#include <things.hpp>
 
 Grid grid;
 
@@ -120,15 +121,39 @@ bool Grid::tile_open(RL::Vector2 pos) {
 
     tile_states[i] = TileState::OPEN;
 
-    if (tiles[i] == Tile::EMPTY) {
-        tile_open({pos.x, pos.y - 1});
-        tile_open({pos.x - 1, pos.y - 1});
-        tile_open({pos.x - 1, pos.y});
-        tile_open({pos.x - 1, pos.y + 1});
-        tile_open({pos.x, pos.y + 1});
-        tile_open({pos.x + 1, pos.y + 1});
-        tile_open({pos.x + 1, pos.y});
-        tile_open({pos.x + 1, pos.y - 1});
+    switch (tiles[i]) {
+        case Tile::EMPTY:
+            tile_open({pos.x, pos.y - 1});
+            tile_open({pos.x - 1, pos.y - 1});
+            tile_open({pos.x - 1, pos.y});
+            tile_open({pos.x - 1, pos.y + 1});
+            tile_open({pos.x, pos.y + 1});
+            tile_open({pos.x + 1, pos.y + 1});
+            tile_open({pos.x + 1, pos.y});
+            tile_open({pos.x + 1, pos.y - 1});
+            break;
+
+        case Tile::MINE:
+            for (int xx = -1; xx < 2; xx++) {
+                for (int yy = -1; yy < 2; yy++) {
+                    for (const auto& thing : things) {
+                        if (thing->x == (pos.x + xx) && thing->y == (pos.y + yy)) {
+                            thing->damage(20);
+                        }
+                    }
+                }
+            }
+
+            tiles[i] = Tile::MINE_HIT;
+            tile_open({pos.x, pos.y - 1});
+            tile_open({pos.x - 1, pos.y - 1});
+            tile_open({pos.x - 1, pos.y});
+            tile_open({pos.x - 1, pos.y + 1});
+            tile_open({pos.x, pos.y + 1});
+            tile_open({pos.x + 1, pos.y + 1});
+            tile_open({pos.x + 1, pos.y});
+            tile_open({pos.x + 1, pos.y - 1});
+            break;
     }
 
     return true;
