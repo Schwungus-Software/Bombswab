@@ -15,3 +15,6 @@ extern RL::Sound explode2;
 extern RL::Sound explode3;
 
 void load_sounds();
+
+void play_sound_global(RL::Sound);
+void play_sound_at(RL::Sound, RL::Vector2);

@@ -24,6 +24,8 @@ class Player : public Humanoid {
   public:
     Player(int x, int y) : Humanoid(x, y, RL::BLUE) {}
 
+    void step() override;
+
     void act() override;
 };
 

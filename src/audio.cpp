@@ -33,3 +33,10 @@ void load_sounds() {
 
     ready = true;
 }
+
+void play_sound_global(RL::Sound snd) { RL::PlaySound(snd); }
+
+void play_sound_at(RL::Sound snd, RL::Vector2) {
+    // TODO: implement with panning.
+    RL::PlaySound(snd);
+}

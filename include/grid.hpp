@@ -17,14 +17,21 @@ enum class TileState {
     MAX,
 };
 
+struct GridTile {
+    TileState state;
+    Tile kind;
+};
+
 class Grid {
   public:
-    std::array<Tile, GRID_WIDTH * GRID_HEIGHT> tiles;
-    std::array<TileState, GRID_WIDTH * GRID_HEIGHT> tile_states;
+    std::array<GridTile, GRID_WIDTH * GRID_HEIGHT> tiles;
 
     Grid();
-    Tile tile_at(RL::Vector2);
-    bool tile_open(RL::Vector2);
+
+    GridTile& tile_at(RL::Vector2);
+    bool is_open(RL::Vector2);
+
+    void open(RL::Vector2, bool = false);
 };
 
 extern Grid grid;

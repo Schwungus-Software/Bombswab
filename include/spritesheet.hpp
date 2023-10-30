@@ -1,10 +1,12 @@
 #pragma once
 
+#include <cstdint>
+
 #include "rlwrap.hpp"
 
 const int SPRITE_DIM = 16;
 
-enum ThingSprite {
+enum ThingSprite : std::int8_t {
     MAN = 1,
     CORPSE,
     GUN,
@@ -13,7 +15,7 @@ enum ThingSprite {
     BULLET,
 };
 
-enum Tile {
+enum Tile : std::int8_t {
     CLOSED = 1,
     FLAG,
     ITEM,

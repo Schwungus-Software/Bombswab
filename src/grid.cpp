@@ -8,8 +8,9 @@ Grid grid;
 
 Grid::Grid() {
     for (int i = 0; i < GRID_SIZE; i++) {
-        tiles[i] = RL::GetRandomValue(0, 10) == 0 ? Tile::MINE : Tile::EMPTY;
-        tile_states[i] = TileState::CLOSED;
+        auto& tile = tiles[i];
+        tile.kind = RL::GetRandomValue(0, 10) == 0 ? Tile::MINE : Tile::EMPTY;
+        tile.state = TileState::CLOSED;
     }
 
     for (int x = 0; x < GRID_WIDTH; x++) {
@@ -17,41 +18,41 @@ Grid::Grid() {
             float fx = x;
             float fy = y;
 
-            if (tile_at({fx, fy}) != Tile::EMPTY) {
+            if (tile_at({fx, fy}).kind != Tile::EMPTY) {
                 continue;
             }
 
             int mines = 0;
 
-            if (tile_at({fx - 1, fy - 1}) == Tile::MINE) {
+            if (tile_at({fx - 1, fy - 1}).kind == Tile::MINE) {
                 ++mines;
             }
 
-            if (tile_at({fx, fy - 1}) == Tile::MINE) {
+            if (tile_at({fx, fy - 1}).kind == Tile::MINE) {
                 ++mines;
             }
 
-            if (tile_at({fx + 1, fy - 1}) == Tile::MINE) {
+            if (tile_at({fx + 1, fy - 1}).kind == Tile::MINE) {
                 ++mines;
             }
 
-            if (tile_at({fx - 1, fy}) == Tile::MINE) {
+            if (tile_at({fx - 1, fy}).kind == Tile::MINE) {
                 ++mines;
             }
 
-            if (tile_at({fx + 1, fy}) == Tile::MINE) {
+            if (tile_at({fx + 1, fy}).kind == Tile::MINE) {
                 ++mines;
             }
 
-            if (tile_at({fx - 1, fy + 1}) == Tile::MINE) {
+            if (tile_at({fx - 1, fy + 1}).kind == Tile::MINE) {
                 ++mines;
             }
 
-            if (tile_at({fx, fy + 1}) == Tile::MINE) {
+            if (tile_at({fx, fy + 1}).kind == Tile::MINE) {
                 ++mines;
             }
 
-            if (tile_at({fx + 1, fy + 1}) == Tile::MINE) {
+            if (tile_at({fx + 1, fy + 1}).kind == Tile::MINE) {
                 ++mines;
             }
 
@@ -95,42 +96,46 @@ Grid::Grid() {
                     break;
             }
 
-            tiles[x + (y * GRID_WIDTH)] = ind;
+            tiles[x + (y * GRID_WIDTH)].kind = ind;
         }
     }
 }
 
-Tile Grid::tile_at(RL::Vector2 pos) {
-    int i = static_cast<int>(pos.x) + (static_cast<int>(pos.y) * GRID_WIDTH);
+GridTile& Grid::tile_at(RL::Vector2 pos) {
+    static GridTile empty{TileState::OPEN, Tile::EMPTY};
 
-    return (i < 0 || i >= GRID_SIZE) ? Tile::EMPTY : tiles[i];
+    int i = static_cast<int>(pos.x) + (static_cast<int>(pos.y) * GRID_WIDTH);
+    return (i < 0 || i >= GRID_SIZE) ? empty : tiles[i];
 }
 
-bool Grid::tile_open(RL::Vector2 pos) {
-    int i = static_cast<int>(pos.x) + (static_cast<int>(pos.y) * GRID_WIDTH);
+bool Grid::is_open(RL::Vector2 pos) {
+    const auto& tile = tile_at(pos);
+    return tile.state == TileState::OPEN;
+}
 
-    if (i < 0 || i >= GRID_SIZE) {
-        return false;
+void Grid::open(RL::Vector2 pos, bool click_triggered) {
+    auto& tile = tile_at(pos);
+
+    if (tile.state == TileState::OPEN) {
+        return;
     }
 
-    TileState state = tile_states[i];
-
-    if (state == TileState::OPEN || state == TileState::FLAGGED) {
-        return false;
+    if (click_triggered && tile.state == TileState::FLAGGED) {
+        return;
     }
 
-    tile_states[i] = TileState::OPEN;
+    tile.state = TileState::OPEN;
 
-    switch (tiles[i]) {
+    switch (tile.kind) {
         case Tile::EMPTY:
-            tile_open({pos.x, pos.y - 1});
-            tile_open({pos.x - 1, pos.y - 1});
-            tile_open({pos.x - 1, pos.y});
-            tile_open({pos.x - 1, pos.y + 1});
-            tile_open({pos.x, pos.y + 1});
-            tile_open({pos.x + 1, pos.y + 1});
-            tile_open({pos.x + 1, pos.y});
-            tile_open({pos.x + 1, pos.y - 1});
+            open({pos.x, pos.y - 1});
+            open({pos.x - 1, pos.y - 1});
+            open({pos.x - 1, pos.y});
+            open({pos.x - 1, pos.y + 1});
+            open({pos.x, pos.y + 1});
+            open({pos.x + 1, pos.y + 1});
+            open({pos.x + 1, pos.y});
+            open({pos.x + 1, pos.y - 1});
             break;
 
         case Tile::MINE:
@@ -145,22 +150,41 @@ bool Grid::tile_open(RL::Vector2 pos) {
                 }
             }
 
-            tiles[i] = Tile::MINE_HIT;
-            tile_open({pos.x, pos.y - 1});
-            tile_open({pos.x - 1, pos.y - 1});
-            tile_open({pos.x - 1, pos.y});
-            tile_open({pos.x - 1, pos.y + 1});
-            tile_open({pos.x, pos.y + 1});
-            tile_open({pos.x + 1, pos.y + 1});
-            tile_open({pos.x + 1, pos.y});
-            tile_open({pos.x + 1, pos.y - 1});
+            tile.kind = Tile::MINE_HIT;
+
+            {
+                RL::Sound boom = {0};
+
+                switch (RL::GetRandomValue(0, 2)) {
+                    case 0:
+                        boom = explode1;
+                        break;
+
+                    case 1:
+                        boom = explode2;
+                        break;
+
+                    case 2:
+                        boom = explode3;
+                        break;
+                }
+
+                play_sound_at(boom, pos);
+            }
+
+            open({pos.x, pos.y - 1});
+            open({pos.x - 1, pos.y - 1});
+            open({pos.x - 1, pos.y});
+            open({pos.x - 1, pos.y + 1});
+            open({pos.x, pos.y + 1});
+            open({pos.x + 1, pos.y + 1});
+            open({pos.x + 1, pos.y});
+            open({pos.x + 1, pos.y - 1});
             break;
         default:
             // Don't care about the rest.
             break;
     }
-
-    return true;
 }
 
 RL::Vector2 mouse_to_grid() {

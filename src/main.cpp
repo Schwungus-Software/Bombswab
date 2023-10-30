@@ -49,8 +49,8 @@ int main(int argc, char* argv[]) {
                 const auto& tile = grid.tiles[i];
 
                 const auto& visible_tile =
-                    grid.tile_states[i] == TileState::CLOSED ? Tile::CLOSED
-                                                             : tile;
+                    grid.tiles[i].state == TileState::CLOSED ? Tile::CLOSED
+                                                             : tile.kind;
 
                 draw<Tile>(visible_tile, {x, y});
             }
@@ -58,12 +58,16 @@ int main(int argc, char* argv[]) {
             for (const auto& thing : things) {
                 thing->tick();
 
+                const auto& tile_state = grid.tile_at(thing->pos()).state;
+
+                if (tile_state == TileState::CLOSED) {
+                    continue;
+                }
+
                 const auto layers = thing->draw();
 
                 for (const auto& layer : layers) {
-                    const auto x = static_cast<float>(thing->x);
-                    const auto y = static_cast<float>(thing->y);
-                    draw<ThingSprite>(layer, {x, y});
+                    draw<ThingSprite>(layer, thing->pos());
                 }
             }
 

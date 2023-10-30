@@ -6,7 +6,7 @@ std::vector<TintedSprite<ThingSprite>> Humanoid::draw() {
     // TODO: flip correctly when going up/down too.
     const auto gun =
         dir == Direction::LEFT ? -ThingSprite::GUN : ThingSprite::GUN;
-    return {{ThingSprite::MAN, body_color}, gun};
+    return {{ThingSprite::MAN, body_color}, {gun}};
 }
 
 void Humanoid::step() {
@@ -43,28 +43,6 @@ void Humanoid::step() {
 
         play_sound_local(footstep);
     }
-
-    RL::Vector2 p = pos();
-
-    if (grid.tile_open(p) && grid.tile_at(p) == Tile::MINE_HIT) {
-        RL::Sound boom = {0};
-
-        switch (RL::GetRandomValue(0, 2)) {
-            case 0:
-                boom = explode1;
-                break;
-
-            case 1:
-                boom = explode2;
-                break;
-
-            case 2:
-                boom = explode3;
-                break;
-        }
-
-        play_sound_local(boom);
-    }
 }
 
 void Humanoid::before_death() {
@@ -75,6 +53,11 @@ void Humanoid::before_death() {
     corpse->max_health = max_health;
     corpse->cur_health = std::max(1, max_health / 2);
     spawn_queue.push_back(std::move(corpse));
+}
+
+void Player::step() {
+    grid.open(pos());
+    Humanoid::step();
 }
 
 void Player::act() {

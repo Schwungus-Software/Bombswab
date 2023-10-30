@@ -63,9 +63,9 @@ Thing* Thing::collide_at(bool ghost_bypass) {
     return nullptr;
 }
 
-void Thing::play_sound(RL::Sound snd) { RL::PlaySound(snd); }
+void Thing::play_sound(RL::Sound snd) { play_sound_global(snd); }
 
-void Thing::play_sound_local(RL::Sound snd) { play_sound(snd); }
+void Thing::play_sound_local(RL::Sound snd) { play_sound_at(snd, pos()); }
 
 RL::Vector2 Thing::pos() {
     return {static_cast<float>(x), static_cast<float>(y)};
