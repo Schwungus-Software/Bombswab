@@ -52,7 +52,7 @@ class Thing {
     virtual void act() {}
 
     // Draw this thing in multiple layers.
-    virtual std::vector<TintedSprite> draw() = 0;
+    virtual std::vector<TintedSprite<ThingSprite>> draw() = 0;
 
     /// Deal damage and return `true` if it was fatal.
     bool damage(int);

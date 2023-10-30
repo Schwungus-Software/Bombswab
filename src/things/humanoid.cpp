@@ -2,10 +2,11 @@
 #include "grid.hpp"
 #include "things.hpp"
 
-std::vector<TintedSprite> Humanoid::draw() {
+std::vector<TintedSprite<ThingSprite>> Humanoid::draw() {
     // TODO: flip correctly when going up/down too.
-    const auto gun = dir == Direction::LEFT ? -Sprite::GUN : Sprite::GUN;
-    return {{Sprite::MAN, body_color}, gun};
+    const auto gun =
+        dir == Direction::LEFT ? -ThingSprite::GUN : ThingSprite::GUN;
+    return {{ThingSprite::MAN, body_color}, gun};
 }
 
 void Humanoid::step() {

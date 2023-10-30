@@ -3,11 +3,11 @@
 #include <vector>
 
 #include "audio.hpp"
+#include "grid.hpp"
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
 #include "thing.hpp"
 #include "things.hpp"
-#include "grid.hpp"
 
 std::vector<std::unique_ptr<Thing>> things;
 std::vector<std::unique_ptr<Thing>> spawn_queue;
@@ -43,11 +43,16 @@ int main(int argc, char* argv[]) {
             RL::ClearBackground({69, 42, 16, 255});
 
             for (int i = 0; i < GRID_SIZE; i++) {
-                int x = i % GRID_WIDTH;
-                int y = i / GRID_HEIGHT;
-                const auto tile = grid.tiles[i];
+                const auto x = static_cast<float>(i % GRID_WIDTH);
+                const auto y = static_cast<float>(i / GRID_HEIGHT);
 
-                draw_tile(grid.tile_states[i] == TileState::CLOSED ? Tile::CLOSED : tile, {static_cast<float>(x), static_cast<float>(y)});
+                const auto& tile = grid.tiles[i];
+
+                const auto& visible_tile =
+                    grid.tile_states[i] == TileState::CLOSED ? Tile::CLOSED
+                                                             : tile;
+
+                draw<Tile>(visible_tile, {x, y});
             }
 
             for (const auto& thing : things) {
@@ -58,7 +63,7 @@ int main(int argc, char* argv[]) {
                 for (const auto& layer : layers) {
                     const auto x = static_cast<float>(thing->x);
                     const auto y = static_cast<float>(thing->y);
-                    draw(layer, {x, y});
+                    draw<ThingSprite>(layer, {x, y});
                 }
             }
 

@@ -13,7 +13,7 @@ class Humanoid : public Thing {
     Humanoid(int x, int y, RL::Color body_color)
         : Thing(x, y), body_color(body_color) {}
 
-    std::vector<TintedSprite> draw() override;
+    std::vector<TintedSprite<ThingSprite>> draw() override;
 
     void step() override;
 
@@ -38,7 +38,7 @@ class Corpse : public Thing {
   public:
     Corpse(int x, int y) : Thing(x, y) { ghost = true; }
 
-    std::vector<TintedSprite> draw() override;
+    std::vector<TintedSprite<ThingSprite>> draw() override;
 
     // TODO: override `before_death` to add blood splatters.
 };
@@ -62,5 +62,5 @@ class Bullet : public Projectile {
   public:
     Bullet(int dest_x, int dest_y) : Projectile(dest_x, dest_y, 30, 10) {}
 
-    std::vector<TintedSprite> draw() override;
+    std::vector<TintedSprite<ThingSprite>> draw() override;
 };

@@ -9,4 +9,5 @@ IndentAccessModifiers: false
 AllowShortBlocksOnASingleLine: Empty
 FixNamespaceComments: true
 NamespaceIndentation: All
+AlwaysBreakTemplateDeclarations: Yes
 IndentCaseLabels: true

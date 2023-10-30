@@ -137,7 +137,8 @@ bool Grid::tile_open(RL::Vector2 pos) {
             for (int xx = -1; xx < 2; xx++) {
                 for (int yy = -1; yy < 2; yy++) {
                     for (const auto& thing : things) {
-                        if (thing->x == (pos.x + xx) && thing->y == (pos.y + yy)) {
+                        if (thing->x == (pos.x + xx) &&
+                            thing->y == (pos.y + yy)) {
                             thing->damage(20);
                         }
                     }
@@ -153,6 +154,9 @@ bool Grid::tile_open(RL::Vector2 pos) {
             tile_open({pos.x + 1, pos.y + 1});
             tile_open({pos.x + 1, pos.y});
             tile_open({pos.x + 1, pos.y - 1});
+            break;
+        default:
+            // Don't care about the rest.
             break;
     }
 

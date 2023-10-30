@@ -2,16 +2,38 @@
 
 #include "spritesheet.hpp"
 
-RL::Texture2D load_flipped_spritesheet(const RL::Texture2D& orig) {
-    auto img = RL::LoadImageFromTexture(orig);
+template <>
+const Spritesheet<ThingSprite> SpritesheetFor<ThingSprite>::value{
+    6, 1, "assets/spritesheet.png"};
+
+template <>
+const Spritesheet<Tile> SpritesheetFor<Tile>::value{16, 1,
+                                                    "assets/tilesheet.png"};
+
+template <typename SpriteType>
+RL::Texture2D Spritesheet<SpriteType>::texture() const {
+    static const auto texture = RL::LoadTexture(sheet_path);
+    return texture;
+}
+
+RL::Texture2D load_texture_flipped(RL::Texture2D texture) {
+    auto img = RL::LoadImageFromTexture(texture);
     RL::ImageFlipHorizontal(&img);
     return RL::LoadTextureFromImage(img);
 }
 
-void draw(TintedSprite sprite, RL::Vector2 position) {
-    static const auto spritesheet = RL::LoadTexture("assets/spritesheet.png");
-    static const auto flipped_spritesheet =
-        load_flipped_spritesheet(spritesheet);
+template <typename SpriteType>
+RL::Texture2D Spritesheet<SpriteType>::texture_flipped() const {
+    static const auto texture = load_texture_flipped(this->texture());
+    return texture;
+}
+
+template <typename SpriteType>
+void draw(const TintedSprite<SpriteType>& sprite, RL::Vector2 position) {
+    const auto& spritesheet = SpritesheetFor<SpriteType>::value;
+
+    static const auto sheet = spritesheet.texture(),
+                      sheet_flipped = spritesheet.texture_flipped();
 
     RL::Vector2 px_position;
     px_position.x = position.x * SPRITE_DIM;
@@ -22,36 +44,19 @@ void draw(TintedSprite sprite, RL::Vector2 position) {
     RL::Rectangle source;
     source.width = source.height = SPRITE_DIM;
 
-    const auto col = static_cast<int>(sprite_idx % SPRITESHEET_WIDTH);
+    const auto col = static_cast<int>(sprite_idx % spritesheet.width);
 
     if (sprite.sprite_idx < 0) {
-        source.x = (SPRITESHEET_WIDTH - 1 - col) * SPRITE_DIM;
+        source.x = (spritesheet.width - 1 - col) * SPRITE_DIM;
     } else {
         source.x = col * SPRITE_DIM;
     }
 
-    source.y = static_cast<int>(sprite_idx / SPRITESHEET_WIDTH) * SPRITE_DIM;
+    source.y = static_cast<int>(sprite_idx / spritesheet.width) * SPRITE_DIM;
 
-    const auto active_spritesheet =
-        sprite.sprite_idx < 0 ? flipped_spritesheet : spritesheet;
-
-    RL::DrawTextureRec(active_spritesheet, source, px_position, sprite.tint);
+    const auto active_sheet = sprite.sprite_idx < 0 ? sheet_flipped : sheet;
+    RL::DrawTextureRec(active_sheet, source, px_position, sprite.tint);
 }
 
-void draw_tile(Tile tile, RL::Vector2 position) {
-    static const auto tilesheet = RL::LoadTexture("assets/tilesheet.png");
-
-    RL::Vector2 px_position;
-    px_position.x = position.x * SPRITE_DIM;
-    px_position.y = position.y * SPRITE_DIM;
-
-    const auto tile_idx = std::abs((int)tile) - 1;
-
-    RL::Rectangle source;
-    source.width = SPRITE_DIM;
-    source.height = SPRITE_DIM;
-
-    source.x = static_cast<int>(tile_idx % TILESHEET_WIDTH) * SPRITE_DIM;
-    source.y = static_cast<int>(tile_idx / TILESHEET_WIDTH) * SPRITE_DIM;
-    RL::DrawTextureRec(tilesheet, source, px_position, RL::WHITE);
-}
+template void draw<ThingSprite>(const TintedSprite<ThingSprite>&, RL::Vector2);
+template void draw<Tile>(const TintedSprite<Tile>&, RL::Vector2);

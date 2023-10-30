@@ -4,27 +4,17 @@
 
 const int SPRITE_DIM = 16;
 
-// TODO: update every time a new sprite is added until this reaches 16.
-const int SPRITESHEET_WIDTH = 6;
-const int TILESHEET_WIDTH = 16;
-
-/// Sprite indices inside the spritesheet. Update after changing the PNG.
-///
-/// Tip: negate to flip horizontally.
-enum Sprite {
-    MIN = 0,
-    MAN,
+enum ThingSprite {
+    MAN = 1,
     CORPSE,
     GUN,
     SHOTGUN,
     ROCKET,
     BULLET,
-    MAX,
 };
 
-enum class Tile {
-    MIN = 0,
-    CLOSED,
+enum Tile {
+    CLOSED = 1,
     FLAG,
     ITEM,
     ITEM_DOWN,
@@ -40,17 +30,37 @@ enum class Tile {
     _6,
     _7,
     _8,
-    MAX,
 };
 
+template <typename SpriteType>
+class Spritesheet {
+  public:
+    const int width, height;
+    const char* sheet_path;
+
+    constexpr Spritesheet(const int width, const int height,
+                          const char* sheet_path)
+        : width(width), height(height), sheet_path(sheet_path) {}
+
+    RL::Texture2D texture() const;
+    RL::Texture2D texture_flipped() const;
+};
+
+template <typename SpriteType>
+struct SpritesheetFor {
+    const static Spritesheet<SpriteType> value;
+};
+
+template <typename SpriteType>
 struct TintedSprite {
     int sprite_idx;
     RL::Color tint;
 
-    TintedSprite(const int& idx, RL::Color tint)
-        : sprite_idx(idx), tint(tint) {}
-    TintedSprite(const int& idx) : TintedSprite(idx, RL::WHITE) {}
+    TintedSprite() = delete;
+
+    TintedSprite(int idx, RL::Color tint) : sprite_idx(idx), tint(tint) {}
+    TintedSprite(int idx) : TintedSprite(idx, RL::WHITE) {}
 };
 
-void draw(TintedSprite, RL::Vector2);
-void draw_tile(Tile, RL::Vector2);
+template <typename SpriteType>
+void draw(const TintedSprite<SpriteType>&, RL::Vector2);
