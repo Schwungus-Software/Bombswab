@@ -67,6 +67,10 @@ void Thing::play_sound(RL::Sound snd) { RL::PlaySound(snd); }
 
 void Thing::play_sound_local(RL::Sound snd) { play_sound(snd); }
 
+RL::Vector2 Thing::pos() {
+    return {static_cast<float>(x), static_cast<float>(y)};
+}
+
 void Action::tick(Thing& actor) {
     if (length-- == 1) {
         perform(actor);

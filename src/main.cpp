@@ -7,6 +7,7 @@
 #include "spritesheet.hpp"
 #include "thing.hpp"
 #include "things.hpp"
+#include "grid.hpp"
 
 std::vector<std::unique_ptr<Thing>> things;
 std::vector<std::unique_ptr<Thing>> spawn_queue;
@@ -41,12 +42,13 @@ int main(int argc, char* argv[]) {
         {
             RL::ClearBackground({69, 42, 16, 255});
 
-            draw_tile(Tile::ITEM, {0, 0});
-            draw_tile(Tile::ITEM, {0, 2});
-            draw_tile(Tile::CLOSED, {1, 1});
-            draw_tile(Tile::CLOSED, {2, 1});
-            draw_tile(Tile::CLOSED, {3, 1});
-            draw_tile(Tile::MINE_HIT, {4, 1});
+            for (int i = 0; i < GRID_SIZE; i++) {
+                int x = i % GRID_WIDTH;
+                int y = i / GRID_HEIGHT;
+                const auto tile = grid.tiles[i];
+
+                draw_tile(grid.tile_states[i] == TileState::CLOSED ? Tile::CLOSED : tile, {static_cast<float>(x), static_cast<float>(y)});
+            }
 
             for (const auto& thing : things) {
                 thing->tick();

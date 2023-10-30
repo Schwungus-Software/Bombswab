@@ -42,6 +42,8 @@ void Humanoid::step() {
     if (stepped) {
         play_sound_local(footstep);
     }
+
+    grid.tile_open(pos());
 }
 
 void Humanoid::before_death() {

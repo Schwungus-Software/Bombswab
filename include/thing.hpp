@@ -63,6 +63,8 @@ class Thing {
     void play_sound(RL::Sound);
     void play_sound_local(RL::Sound);
 
+    RL::Vector2 pos();
+
     virtual void step() {}
 
     virtual void before_death() {}
