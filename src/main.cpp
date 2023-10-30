@@ -41,6 +41,13 @@ int main(int argc, char* argv[]) {
         {
             RL::ClearBackground({69, 42, 16, 255});
 
+            draw_tile(Tile::ITEM, {0, 0});
+            draw_tile(Tile::ITEM, {0, 2});
+            draw_tile(Tile::CLOSED, {1, 1});
+            draw_tile(Tile::CLOSED, {2, 1});
+            draw_tile(Tile::CLOSED, {3, 1});
+            draw_tile(Tile::MINE_HIT, {4, 1});
+
             for (const auto& thing : things) {
                 thing->tick();
 

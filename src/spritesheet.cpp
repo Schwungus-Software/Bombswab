@@ -37,3 +37,21 @@ void draw(TintedSprite sprite, RL::Vector2 position) {
 
     RL::DrawTextureRec(active_spritesheet, source, px_position, sprite.tint);
 }
+
+void draw_tile(Tile tile, RL::Vector2 position) {
+    static const auto tilesheet = RL::LoadTexture("assets/tilesheet.png");
+
+    RL::Vector2 px_position;
+    px_position.x = position.x * SPRITE_DIM;
+    px_position.y = position.y * SPRITE_DIM;
+
+    const auto tile_idx = std::abs((int)tile) - 1;
+
+    RL::Rectangle source;
+    source.width = SPRITE_DIM;
+    source.height = SPRITE_DIM;
+
+    source.x = static_cast<int>(tile_idx % TILESHEET_WIDTH) * SPRITE_DIM;
+    source.y = static_cast<int>(tile_idx / TILESHEET_WIDTH) * SPRITE_DIM;
+    RL::DrawTextureRec(tilesheet, source, px_position, RL::WHITE);
+}
