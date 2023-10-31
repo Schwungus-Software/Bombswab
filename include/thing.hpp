@@ -33,7 +33,7 @@ class Thing {
 
     // Main flags.
 
-    // Ignored in collision detection. This can still be bypassed.
+    // Phases through walls.
     bool ghost;
 
     // Misc. flags.
@@ -51,8 +51,13 @@ class Thing {
     /// Called every time an action can be taken.
     virtual void act() {}
 
-    // Draw this thing in multiple layers.
-    virtual std::vector<TintedSprite<ThingSprite>> draw() = 0;
+    /// Called whenever a collision with a wall occurs.
+    virtual void collide();
+
+    using Sprite = TintedSprite<ThingSprite>;
+
+    /// Draw this thing in multiple layers.
+    virtual std::vector<Sprite> draw() = 0;
 
     /// Deal damage and return `true` if it was fatal.
     bool damage(int);

@@ -1,4 +1,5 @@
 #include <cmath>
+#include <functional>
 
 #include "grid.hpp"
 #include "spritesheet.hpp"
@@ -7,42 +8,28 @@
 
 Grid grid;
 
-Grid::Grid() {
+bool GridTile::is_closed() const {
+    switch (kind) {
+        case Tile::CLOSED:
+        case Tile::MINE:
+            return true;
+        default:
+            return false;
+    }
+}
+
+Grid::Grid() {}
+
+void Grid::generate() {
     for (std::size_t i = 0; i < GRID_SIZE; i++) {
         auto& tile = tiles[i];
-        tile.kind = RL::GetRandomValue(1, 10) == 1 ? Tile::MINE : Tile::EMPTY;
-        tile.state = TileState::CLOSED;
-    }
-
-    for (int x = 0; x < GRID_WIDTH; x++) {
-        for (int y = 0; y < GRID_HEIGHT; y++) {
-            float fx = x;
-            float fy = y;
-
-            if (tile_at({fx, fy}).kind != Tile::EMPTY) {
-                continue;
-            }
-
-            std::int8_t mines = 0;
-
-            for (int dx = -1; dx <= 1; dx++) {
-                for (int dy = -1; dy <= 1; dy++) {
-                    if (tile_at({fx + dx, fy + dy}).kind == Tile::MINE) {
-                        mines++;
-                    }
-                }
-            }
-
-            if (mines != 0) {
-                const auto ind = static_cast<Tile>(Tile::_1 + mines - 1);
-                tiles[x + (y * GRID_WIDTH)].kind = ind;
-            }
-        }
+        tile.kind = RL::GetRandomValue(1, 7) == 1 ? Tile::MINE : Tile::CLOSED;
+        tile.turns_till_active = 0;
     }
 }
 
 GridTile& Grid::tile_at(RL::Vector2 pos) {
-    static GridTile empty{TileState::OPEN, Tile::EMPTY};
+    static GridTile empty{Tile::CLOSED, 0};
 
     if (pos.x < 0 || pos.y < 0 || pos.x > GRID_WIDTH || pos.y > GRID_HEIGHT) {
         return empty;
@@ -54,9 +41,118 @@ GridTile& Grid::tile_at(RL::Vector2 pos) {
     return (i < 0 || i >= GRID_SIZE) ? empty : tiles[i];
 }
 
-bool Grid::is_open(RL::Vector2 pos) {
-    const auto& tile = tile_at(pos);
-    return tile.state == TileState::OPEN;
+std::vector<RL::Vector2> Grid::neighbors_of(RL::Vector2 pos) {
+    std::vector<RL::Vector2> result;
+
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            if (dx != 0 || dy != 0) {
+                result.push_back({pos.x + dx, pos.y + dy});
+            }
+        }
+    }
+
+    return result;
+}
+
+void Grid::tick() {
+    bool another_iteration;
+
+    for (std::size_t i = 0; i < GRID_SIZE; i++) {
+        auto& tile = tiles[i];
+
+        if (tile.turns_till_active > 0) {
+            tile.turns_till_active--;
+        }
+    }
+
+    do {
+        another_iteration = false;
+
+        for (std::size_t i = 0; i < GRID_SIZE; i++) {
+            auto& tile = tiles[i];
+
+            if (tile.turns_till_active > 0) {
+                continue;
+            }
+
+            const auto x = static_cast<float>(i % GRID_WIDTH);
+            const auto y = static_cast<float>(i / GRID_HEIGHT);
+
+            const RL::Vector2 pos(x, y);
+
+            const auto count_mines = [this, &tile](RL::Vector2 pos) {
+                std::size_t mines = 0;
+
+                for (const auto neighbor_pos : neighbors_of(pos)) {
+                    auto& neighbor = tile_at(neighbor_pos);
+
+                    if (neighbor.kind == Tile::MINE) {
+                        mines++;
+                    }
+                }
+
+                if (mines == 0) {
+                    tile.kind = Tile::EMPTY;
+                } else {
+                    tile.kind = static_cast<Tile>(Tile::_1 + mines - 1);
+                }
+
+                tile.turns_till_active = 0;
+            };
+
+            switch (tile.kind) {
+                case Tile::EMPTY:
+                case Tile::_1:
+                case Tile::_2:
+                case Tile::_3:
+                case Tile::_4:
+                case Tile::_5:
+                case Tile::_6:
+                case Tile::_7:
+                case Tile::_8:
+                    count_mines(pos);
+                    break;
+                case Tile::CLOSED: {
+                    for (const auto neighbor_pos : neighbors_of(pos)) {
+                        auto& neighbor = tile_at(neighbor_pos);
+
+                        if (neighbor.kind == Tile::EMPTY) {
+                            count_mines(neighbor_pos);
+                            another_iteration = true;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+                case Tile::MINE_HIT:
+                    for (int xx = -1; xx < 2; xx++) {
+                        for (int yy = -1; yy < 2; yy++) {
+                            for (const auto& thing : things) {
+                                if (thing->x == (pos.x + xx) &&
+                                    thing->y == (pos.y + yy)) {
+                                    thing->damage(20);
+                                }
+                            }
+                        }
+                    }
+
+                    {
+                        const auto boom = pick(explosions);
+                        play_sound_at(*boom, pos);
+                    }
+
+                    tile.kind = Tile::EMPTY;
+                    another_iteration = true;
+
+                    break;
+                default:
+                    // Don't care about the rest.
+                    break;
+            }
+        }
+    } while (another_iteration);
 }
 
 void Grid::open_around(RL::Vector2 pos) {
@@ -71,44 +167,30 @@ void Grid::open_around(RL::Vector2 pos) {
 }
 
 void Grid::open(RL::Vector2 pos) {
-    auto& tile = tile_at(pos);
-
-    if (tile.state == TileState::OPEN) {
+    if (!is_active(pos)) {
         return;
     }
 
-    tile.state = TileState::OPEN;
+    auto& tile = tile_at(pos);
 
     switch (tile.kind) {
-        case Tile::EMPTY:
-            open_around(pos);
+        case Tile::CLOSED:
+        case Tile::MINE_HIT:
+            tile.kind = Tile::EMPTY;
             break;
         case Tile::MINE:
-            for (int xx = -1; xx < 2; xx++) {
-                for (int yy = -1; yy < 2; yy++) {
-                    for (const auto& thing : things) {
-                        if (thing->x == (pos.x + xx) &&
-                            thing->y == (pos.y + yy)) {
-                            thing->damage(20);
-                        }
-                    }
-                }
-            }
-
             tile.kind = Tile::MINE_HIT;
-
-            {
-                const auto boom = pick(explosions);
-                play_sound_at(*boom, pos);
-            }
-
-            open_around(pos);
-
+            tile.turns_till_active = 1;
             break;
         default:
             // Don't care about the rest.
             break;
     }
+}
+
+bool Grid::is_active(RL::Vector2 pos) {
+    const auto& tile = tile_at(pos);
+    return tile.turns_till_active == 0;
 }
 
 RL::Vector2 mouse_to_grid() {

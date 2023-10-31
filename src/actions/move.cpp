@@ -1,7 +1,7 @@
 #include "actions.hpp"
+#include "grid.hpp"
 
 void Move::perform(Thing& actor) {
-    // TODO: Add collision detection when the grid is implemented.
     switch (dir) {
         case Direction::LEFT:
             actor.x--;
@@ -18,5 +18,12 @@ void Move::perform(Thing& actor) {
     }
 
     actor.dir = dir;
-    actor.step();
+
+    if (grid.tile_at(actor.pos()).kind != Tile::EMPTY) {
+        if (!actor.ghost) {
+            actor.collide();
+        }
+    } else {
+        actor.step();
+    }
 }

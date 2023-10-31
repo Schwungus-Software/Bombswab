@@ -1,5 +1,6 @@
 #include "thing.hpp"
 #include "actions.hpp"
+#include "grid.hpp"
 
 Thing::Thing(int x, int y)
     : x(x), y(y), ongoing(new Noop), max_health(1), cur_health(1), ghost(false),
@@ -13,6 +14,12 @@ void Thing::tick() {
     if (ongoing->length == 0 && !deletion_mark) {
         ongoing.reset(new Noop);
         act();
+    }
+}
+
+void Thing::collide() {
+    if (grid.tile_at(pos()).kind != Tile::EMPTY) {
+        ongoing.reset(new Die);
     }
 }
 

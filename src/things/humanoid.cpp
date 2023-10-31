@@ -1,8 +1,9 @@
 #include "actions.hpp"
 #include "grid.hpp"
 #include "things.hpp"
+#include "utils.hpp"
 
-std::vector<TintedSprite<ThingSprite>> Humanoid::draw() {
+std::vector<Thing::Sprite> Humanoid::draw() {
     // TODO: flip correctly when going up/down too.
     const auto gun =
         dir == Direction::LEFT ? -ThingSprite::GUN : ThingSprite::GUN;
@@ -10,38 +11,42 @@ std::vector<TintedSprite<ThingSprite>> Humanoid::draw() {
 }
 
 void Humanoid::step() {
+    if (can_reveal_tiles) {
+        grid.open(pos());
+    }
+
     stepped = !stepped;
 
     if (stepped) {
-        RL::Sound footstep = {0};
+        const auto footstep = pick(footsteps);
+        play_sound_local(*footstep);
+    }
+}
 
-        switch (RL::GetRandomValue(0, 5)) {
-            case 0:
-                footstep = footstep1;
-                break;
+void Humanoid::collide() {
+    const auto& tile = grid.tile_at(pos());
 
-            case 1:
-                footstep = footstep2;
-                break;
+    if (tile.kind == Tile::EMPTY) {
+        return;
+    }
 
-            case 2:
-                footstep = footstep3;
-                break;
+    if (can_reveal_tiles) {
+        grid.open(pos());
+    }
 
-            case 3:
-                footstep = footstep4;
-                break;
-
-            case 4:
-                footstep = footstep5;
-                break;
-
-            case 5:
-                footstep = footstep6;
-                break;
-        }
-
-        play_sound_local(footstep);
+    switch (dir) {
+        case Direction::LEFT:
+            x++;
+            break;
+        case Direction::RIGHT:
+            x--;
+            break;
+        case Direction::UP:
+            y++;
+            break;
+        case Direction::DOWN:
+            y--;
+            break;
     }
 }
 
@@ -53,11 +58,6 @@ void Humanoid::before_death() {
     corpse->max_health = max_health;
     corpse->cur_health = std::max(1, max_health / 2);
     spawn_queue.push_back(std::move(corpse));
-}
-
-void Player::step() {
-    grid.open(pos());
-    Humanoid::step();
 }
 
 void Player::act() {

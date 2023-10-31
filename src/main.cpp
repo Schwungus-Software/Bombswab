@@ -24,8 +24,6 @@ int main(int argc, char* argv[]) {
     RL::InitAudioDevice();
     load_sounds();
 
-    RL::SetRandomSeed(std::time(nullptr));
-
     auto player = std::make_unique<Player>(14, 14);
     player->max_health = 100;
     player->cur_health = player->max_health;
@@ -41,30 +39,42 @@ int main(int argc, char* argv[]) {
         things.push_back(std::move(enemy));
     }
 
+    grid.generate();
+
     while (!RL::WindowShouldClose()) {
+        for (const auto& thing : things) {
+            thing->tick();
+        }
+
+        grid.tick();
+
+        // TODO: revise when the time comes.
+        while (!spawn_queue.empty()) {
+            things.push_back(std::move(spawn_queue.back()));
+            spawn_queue.pop_back();
+        }
+
+        std::erase_if(things,
+                      [](const auto& thing) { return thing->deletion_mark; });
+
         RL::BeginDrawing();
         {
             RL::ClearBackground({69, 42, 16, 255});
 
             for (std::size_t i = 0; i < GRID_SIZE; i++) {
+                auto& tile = grid.tiles[i];
+
                 const auto x = static_cast<float>(i % GRID_WIDTH);
                 const auto y = static_cast<float>(i / GRID_HEIGHT);
 
-                const auto& tile = grid.tiles[i];
-
-                const auto& visible_tile =
-                    grid.tiles[i].state == TileState::CLOSED ? Tile::CLOSED
-                                                             : tile.kind;
-
-                draw<Tile>(visible_tile, {x, y});
+                const auto sprite = tile.is_closed() ? Tile::CLOSED : tile.kind;
+                draw<Tile>(sprite, {x, y});
             }
 
             for (const auto& thing : things) {
-                thing->tick();
+                const auto& tile_at = grid.tile_at(thing->pos());
 
-                const auto& tile_state = grid.tile_at(thing->pos()).state;
-
-                if (tile_state == TileState::CLOSED) {
+                if (tile_at.is_closed()) {
                     continue;
                 }
 
@@ -74,15 +84,6 @@ int main(int argc, char* argv[]) {
                     draw<ThingSprite>(layer, thing->pos());
                 }
             }
-
-            // TODO: revise when the time comes.
-            while (!spawn_queue.empty()) {
-                things.push_back(std::move(spawn_queue.back()));
-                spawn_queue.pop_back();
-            }
-
-            std::erase_if(
-                things, [](const auto& thing) { return thing->deletion_mark; });
         }
         RL::EndDrawing();
     }
