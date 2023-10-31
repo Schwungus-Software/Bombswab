@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
         {
             RL::ClearBackground({69, 42, 16, 255});
 
-            for (int i = 0; i < GRID_SIZE; i++) {
+            for (std::size_t i = 0; i < GRID_SIZE; i++) {
                 const auto x = static_cast<float>(i % GRID_WIDTH);
                 const auto y = static_cast<float>(i / GRID_HEIGHT);
 

@@ -5,9 +5,9 @@
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
 
-const int GRID_WIDTH = 100;
-const int GRID_HEIGHT = 100;
-const int GRID_SIZE = GRID_WIDTH * GRID_HEIGHT;
+const std::size_t GRID_WIDTH = 100;
+const std::size_t GRID_HEIGHT = 100;
+const auto GRID_SIZE = GRID_WIDTH * GRID_HEIGHT;
 
 enum class TileState {
     CLOSED = 0,
@@ -31,7 +31,8 @@ class Grid {
     GridTile& tile_at(RL::Vector2);
     bool is_open(RL::Vector2);
 
-    void open(RL::Vector2, bool = false);
+    void open(RL::Vector2);
+    void open_around(RL::Vector2);
 };
 
 extern Grid grid;

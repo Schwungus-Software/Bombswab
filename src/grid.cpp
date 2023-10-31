@@ -8,7 +8,7 @@
 Grid grid;
 
 Grid::Grid() {
-    for (int i = 0; i < GRID_SIZE; i++) {
+    for (std::size_t i = 0; i < GRID_SIZE; i++) {
         auto& tile = tiles[i];
         tile.kind = RL::GetRandomValue(1, 10) == 1 ? Tile::MINE : Tile::EMPTY;
         tile.state = TileState::CLOSED;
@@ -44,7 +44,13 @@ Grid::Grid() {
 GridTile& Grid::tile_at(RL::Vector2 pos) {
     static GridTile empty{TileState::OPEN, Tile::EMPTY};
 
-    int i = static_cast<int>(pos.x) + (static_cast<int>(pos.y) * GRID_WIDTH);
+    if (pos.x < 0 || pos.y < 0 || pos.x > GRID_WIDTH || pos.y > GRID_HEIGHT) {
+        return empty;
+    }
+
+    const auto i = static_cast<std::size_t>(pos.x) +
+                   (static_cast<std::size_t>(pos.y) * GRID_WIDTH);
+
     return (i < 0 || i >= GRID_SIZE) ? empty : tiles[i];
 }
 
@@ -53,14 +59,21 @@ bool Grid::is_open(RL::Vector2 pos) {
     return tile.state == TileState::OPEN;
 }
 
-void Grid::open(RL::Vector2 pos, bool click_triggered) {
+void Grid::open_around(RL::Vector2 pos) {
+    open({pos.x, pos.y - 1});
+    open({pos.x - 1, pos.y - 1});
+    open({pos.x - 1, pos.y});
+    open({pos.x - 1, pos.y + 1});
+    open({pos.x, pos.y + 1});
+    open({pos.x + 1, pos.y + 1});
+    open({pos.x + 1, pos.y});
+    open({pos.x + 1, pos.y - 1});
+}
+
+void Grid::open(RL::Vector2 pos) {
     auto& tile = tile_at(pos);
 
     if (tile.state == TileState::OPEN) {
-        return;
-    }
-
-    if (click_triggered && tile.state == TileState::FLAGGED) {
         return;
     }
 
@@ -68,16 +81,8 @@ void Grid::open(RL::Vector2 pos, bool click_triggered) {
 
     switch (tile.kind) {
         case Tile::EMPTY:
-            open({pos.x, pos.y - 1});
-            open({pos.x - 1, pos.y - 1});
-            open({pos.x - 1, pos.y});
-            open({pos.x - 1, pos.y + 1});
-            open({pos.x, pos.y + 1});
-            open({pos.x + 1, pos.y + 1});
-            open({pos.x + 1, pos.y});
-            open({pos.x + 1, pos.y - 1});
+            open_around(pos);
             break;
-
         case Tile::MINE:
             for (int xx = -1; xx < 2; xx++) {
                 for (int yy = -1; yy < 2; yy++) {
@@ -97,14 +102,8 @@ void Grid::open(RL::Vector2 pos, bool click_triggered) {
                 play_sound_at(*boom, pos);
             }
 
-            open({pos.x, pos.y - 1});
-            open({pos.x - 1, pos.y - 1});
-            open({pos.x - 1, pos.y});
-            open({pos.x - 1, pos.y + 1});
-            open({pos.x, pos.y + 1});
-            open({pos.x + 1, pos.y + 1});
-            open({pos.x + 1, pos.y});
-            open({pos.x + 1, pos.y - 1});
+            open_around(pos);
+
             break;
         default:
             // Don't care about the rest.
@@ -117,6 +116,5 @@ RL::Vector2 mouse_to_grid() {
     auto mouse = RL::GetMousePosition();
     mouse.x = static_cast<int>(mouse.x / SPRITE_DIM);
     mouse.y = static_cast<int>(mouse.y / SPRITE_DIM);
-
     return mouse;
 }
