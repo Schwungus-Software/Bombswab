@@ -82,7 +82,7 @@ class Thing {
     RL::Vector2 pos();
 
     virtual void step() {}
-
+    virtual void pain() {}
     virtual void before_death() {}
 
     virtual ~Thing();
@@ -109,6 +109,8 @@ class Humanoid : public Thing {
     void step() override;
 
     void collide() override;
+
+    void pain() override;
 
     void before_death() override;
 };

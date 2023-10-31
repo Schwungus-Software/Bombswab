@@ -69,6 +69,7 @@ bool Thing::damage(int amount) {
         return true;
     }
 
+    pain();
     return false;
 }
 

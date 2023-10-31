@@ -55,6 +55,11 @@ void Humanoid::collide() {
     }
 }
 
+void Humanoid::pain() {
+    const auto pain = pick(pains);
+    play_sound_local(*pain);
+}
+
 void Humanoid::before_death() {
     play_sound_local(human_die);
 

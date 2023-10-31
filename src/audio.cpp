@@ -1,7 +1,7 @@
 #include "audio.hpp"
 
 RL::Sound footstep1, footstep2, footstep3, footstep4, footstep5, footstep6,
-    rifle_fire, human_die, explode1, explode2, explode3;
+    rifle_fire, human_die, explode1, explode2, explode3, pain1, pain2, pain3;
 
 void load_sounds() {
     static bool ready = false;
@@ -21,6 +21,9 @@ void load_sounds() {
     explode1 = RL::LoadSound("assets/sounds/explode1.wav");
     explode2 = RL::LoadSound("assets/sounds/explode2.wav");
     explode3 = RL::LoadSound("assets/sounds/explode3.wav");
+    pain1 = RL::LoadSound("assets/sounds/pain1.wav");
+    pain2 = RL::LoadSound("assets/sounds/pain2.wav");
+    pain3 = RL::LoadSound("assets/sounds/pain3.wav");
 
     ready = true;
 }
