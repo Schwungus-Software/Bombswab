@@ -17,11 +17,7 @@ void Thing::tick() {
     }
 }
 
-void Thing::collide() {
-    if (grid.tile_at(pos()).kind != Tile::EMPTY) {
-        ongoing.reset(new Die);
-    }
-}
+void Thing::collide() { ongoing.reset(new Die); }
 
 bool Thing::damage(int amount) {
     cur_health -= amount;

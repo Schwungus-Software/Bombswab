@@ -26,10 +26,6 @@ void Humanoid::step() {
 void Humanoid::collide() {
     const auto& tile = grid.tile_at(pos());
 
-    if (tile.kind == Tile::EMPTY) {
-        return;
-    }
-
     if (can_reveal_tiles) {
         grid.open(pos());
     }

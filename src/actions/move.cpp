@@ -19,7 +19,7 @@ void Move::perform(Thing& actor) {
 
     actor.dir = dir;
 
-    if (grid.tile_at(actor.pos()).kind != Tile::EMPTY) {
+    if (grid.tile_at(actor.pos()).is_closed()) {
         if (!actor.ghost) {
             actor.collide();
         }
