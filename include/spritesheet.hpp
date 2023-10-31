@@ -49,9 +49,7 @@ class Spritesheet {
 };
 
 template <typename SpriteType>
-struct SpritesheetFor {
-    const static Spritesheet<SpriteType> value;
-};
+const static Spritesheet<SpriteType> spritesheet_for;
 
 template <typename SpriteType>
 struct TintedSprite {

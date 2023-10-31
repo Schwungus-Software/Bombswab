@@ -1,16 +1,7 @@
 #include "audio.hpp"
 
-RL::Sound footstep1 = {0};
-RL::Sound footstep2 = {0};
-RL::Sound footstep3 = {0};
-RL::Sound footstep4 = {0};
-RL::Sound footstep5 = {0};
-RL::Sound footstep6 = {0};
-RL::Sound rifle_fire = {0};
-RL::Sound human_die = {0};
-RL::Sound explode1 = {0};
-RL::Sound explode2 = {0};
-RL::Sound explode3 = {0};
+RL::Sound footstep1, footstep2, footstep3, footstep4, footstep5, footstep6,
+    rifle_fire, human_die, explode1, explode2, explode3;
 
 void load_sounds() {
     static bool ready = false;
@@ -34,9 +25,9 @@ void load_sounds() {
     ready = true;
 }
 
-void play_sound_global(RL::Sound snd) { RL::PlaySound(snd); }
+void play_sound_global(const RL::Sound& snd) { RL::PlaySound(snd); }
 
-void play_sound_at(RL::Sound snd, RL::Vector2) {
+void play_sound_at(const RL::Sound& snd, RL::Vector2) {
     // TODO: implement with panning.
     RL::PlaySound(snd);
 }

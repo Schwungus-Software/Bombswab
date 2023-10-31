@@ -1,9 +1,11 @@
 #include <algorithm>
+#include <ctime>
 #include <memory>
 #include <vector>
 
 #include "audio.hpp"
 #include "grid.hpp"
+#include "raylib.h"
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
 #include "thing.hpp"
@@ -18,18 +20,20 @@ int main(int argc, char* argv[]) {
 
     RL::InitWindow(screen_width, screen_height, "Bashar Quest");
     RL::SetTargetFPS(60);
-    RL::InitAudioDevice();
 
+    RL::InitAudioDevice();
     load_sounds();
+
+    RL::SetRandomSeed(std::time(nullptr));
 
     auto player = std::make_unique<Player>(14, 14);
     player->max_health = 100;
     player->cur_health = player->max_health;
     things.push_back(std::move(player));
 
-    for (int enemy_count = 10; enemy_count > 0; enemy_count--) {
-        const auto x = RL::GetRandomValue(0, 29);
-        const auto y = RL::GetRandomValue(0, 29);
+    for (int enemy_count = 20; enemy_count > 0; enemy_count--) {
+        const auto x = RL::GetRandomValue(0, GRID_WIDTH - 1);
+        const auto y = RL::GetRandomValue(0, GRID_HEIGHT - 1);
 
         auto enemy = std::make_unique<Enemy>(x, y);
         enemy->max_health = 20;

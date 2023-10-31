@@ -2,14 +2,15 @@
 
 #include "grid.hpp"
 #include "spritesheet.hpp"
-#include <things.hpp>
+#include "things.hpp"
+#include "utils.hpp"
 
 Grid grid;
 
 Grid::Grid() {
     for (int i = 0; i < GRID_SIZE; i++) {
         auto& tile = tiles[i];
-        tile.kind = RL::GetRandomValue(0, 10) == 0 ? Tile::MINE : Tile::EMPTY;
+        tile.kind = RL::GetRandomValue(1, 10) == 1 ? Tile::MINE : Tile::EMPTY;
         tile.state = TileState::CLOSED;
     }
 
@@ -22,81 +23,20 @@ Grid::Grid() {
                 continue;
             }
 
-            int mines = 0;
+            std::int8_t mines = 0;
 
-            if (tile_at({fx - 1, fy - 1}).kind == Tile::MINE) {
-                ++mines;
+            for (int dx = -1; dx <= 1; dx++) {
+                for (int dy = -1; dy <= 1; dy++) {
+                    if (tile_at({fx + dx, fy + dy}).kind == Tile::MINE) {
+                        mines++;
+                    }
+                }
             }
 
-            if (tile_at({fx, fy - 1}).kind == Tile::MINE) {
-                ++mines;
+            if (mines != 0) {
+                const auto ind = static_cast<Tile>(Tile::_1 + mines - 1);
+                tiles[x + (y * GRID_WIDTH)].kind = ind;
             }
-
-            if (tile_at({fx + 1, fy - 1}).kind == Tile::MINE) {
-                ++mines;
-            }
-
-            if (tile_at({fx - 1, fy}).kind == Tile::MINE) {
-                ++mines;
-            }
-
-            if (tile_at({fx + 1, fy}).kind == Tile::MINE) {
-                ++mines;
-            }
-
-            if (tile_at({fx - 1, fy + 1}).kind == Tile::MINE) {
-                ++mines;
-            }
-
-            if (tile_at({fx, fy + 1}).kind == Tile::MINE) {
-                ++mines;
-            }
-
-            if (tile_at({fx + 1, fy + 1}).kind == Tile::MINE) {
-                ++mines;
-            }
-
-            Tile ind;
-
-            switch (mines) {
-                case 0:
-                    ind = Tile::EMPTY;
-                    break;
-
-                case 1:
-                    ind = Tile::_1;
-                    break;
-
-                case 2:
-                    ind = Tile::_2;
-                    break;
-
-                case 3:
-                    ind = Tile::_3;
-                    break;
-
-                case 4:
-                    ind = Tile::_4;
-                    break;
-
-                case 5:
-                    ind = Tile::_5;
-                    break;
-
-                case 6:
-                    ind = Tile::_6;
-                    break;
-
-                case 7:
-                    ind = Tile::_7;
-                    break;
-
-                case 8:
-                    ind = Tile::_8;
-                    break;
-            }
-
-            tiles[x + (y * GRID_WIDTH)].kind = ind;
         }
     }
 }
@@ -153,23 +93,8 @@ void Grid::open(RL::Vector2 pos, bool click_triggered) {
             tile.kind = Tile::MINE_HIT;
 
             {
-                RL::Sound boom = {0};
-
-                switch (RL::GetRandomValue(0, 2)) {
-                    case 0:
-                        boom = explode1;
-                        break;
-
-                    case 1:
-                        boom = explode2;
-                        break;
-
-                    case 2:
-                        boom = explode3;
-                        break;
-                }
-
-                play_sound_at(boom, pos);
+                const auto boom = pick(explosions);
+                play_sound_at(*boom, pos);
             }
 
             open({pos.x, pos.y - 1});

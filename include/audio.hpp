@@ -1,20 +1,19 @@
 #pragma once
 
+#include <array>
+
 #include "rlwrap.hpp"
 
-extern RL::Sound footstep1;
-extern RL::Sound footstep2;
-extern RL::Sound footstep3;
-extern RL::Sound footstep4;
-extern RL::Sound footstep5;
-extern RL::Sound footstep6;
-extern RL::Sound rifle_fire;
-extern RL::Sound human_die;
-extern RL::Sound explode1;
-extern RL::Sound explode2;
-extern RL::Sound explode3;
+extern RL::Sound footstep1, footstep2, footstep3, footstep4, footstep5,
+    footstep6, rifle_fire, human_die, explode1, explode2, explode3;
+
+const std::array<const RL::Sound*, 6> footsteps{
+    &footstep1, &footstep2, &footstep3, &footstep4, &footstep5, &footstep6};
+
+const std::array<const RL::Sound*, 3> explosions{&explode1, &explode2,
+                                                 &explode3};
 
 void load_sounds();
 
-void play_sound_global(RL::Sound);
-void play_sound_at(RL::Sound, RL::Vector2);
+void play_sound_global(const RL::Sound&);
+void play_sound_at(const RL::Sound&, RL::Vector2);

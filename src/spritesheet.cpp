@@ -3,12 +3,11 @@
 #include "spritesheet.hpp"
 
 template <>
-const Spritesheet<ThingSprite> SpritesheetFor<ThingSprite>::value{
+const Spritesheet<ThingSprite> spritesheet_for<ThingSprite>{
     6, 1, "assets/spritesheet.png"};
 
 template <>
-const Spritesheet<Tile> SpritesheetFor<Tile>::value{16, 1,
-                                                    "assets/tilesheet.png"};
+const Spritesheet<Tile> spritesheet_for<Tile>{16, 1, "assets/tilesheet.png"};
 
 template <typename SpriteType>
 RL::Texture2D Spritesheet<SpriteType>::texture() const {
@@ -30,7 +29,7 @@ RL::Texture2D Spritesheet<SpriteType>::texture_flipped() const {
 
 template <typename SpriteType>
 void draw(const TintedSprite<SpriteType>& sprite, RL::Vector2 position) {
-    const auto& spritesheet = SpritesheetFor<SpriteType>::value;
+    const auto& spritesheet = spritesheet_for<SpriteType>;
 
     static const auto sheet = spritesheet.texture(),
                       sheet_flipped = spritesheet.texture_flipped();

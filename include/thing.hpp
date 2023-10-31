@@ -60,8 +60,8 @@ class Thing {
     bool collides_with(const Thing&, bool = false);
     Thing* collide_at(bool = false);
 
-    void play_sound(RL::Sound);
-    void play_sound_local(RL::Sound);
+    void play_sound(const RL::Sound&);
+    void play_sound_local(const RL::Sound&);
 
     RL::Vector2 pos();
 
