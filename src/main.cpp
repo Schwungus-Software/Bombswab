@@ -12,7 +12,7 @@
 #include "things.hpp"
 
 std::vector<std::unique_ptr<Thing>> things;
-std::vector<std::unique_ptr<Thing>> spawn_queue;
+std::vector<Thing*> spawn_queue;
 
 int main(int argc, char* argv[]) {
     const int screen_width = 800;
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 
         // TODO: revise when the time comes.
         while (!spawn_queue.empty()) {
-            things.push_back(std::move(spawn_queue.back()));
+            things.push_back(std::unique_ptr<Thing>(spawn_queue.back()));
             spawn_queue.pop_back();
         }
 

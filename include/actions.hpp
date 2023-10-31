@@ -1,5 +1,6 @@
 #pragma once
 
+#include "rlwrap.hpp"
 #include "things.hpp"
 
 class Action {
@@ -37,9 +38,9 @@ class Move : public Action {
 
 class Shoot : public Action {
   public:
-    std::unique_ptr<Projectile> projectile;
+    RL::Vector2 destination;
 
-    Shoot(Projectile* projectile) : Action(1), projectile(projectile) {}
+    Shoot(RL::Vector2 destination) : Action(1), destination(destination) {}
 
     void perform(Thing&) override;
 };

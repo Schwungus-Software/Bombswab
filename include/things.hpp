@@ -9,6 +9,7 @@
 #include "spritesheet.hpp"
 
 class Action;
+class AbstractWeapon;
 
 enum class Direction {
     LEFT,
@@ -27,6 +28,9 @@ class Thing {
     // Actions.
 
     std::unique_ptr<Action> ongoing;
+
+    // TODO: all things have a weapon until we add a proper inventory.
+    std::unique_ptr<AbstractWeapon> weapon;
 
     // Health.
 
@@ -63,6 +67,12 @@ class Thing {
     /// Deal damage and return `true` if it was fatal.
     bool damage(int);
 
+    /// Equip a weapon from one of the constants.
+    template <typename WeaponType>
+    void equip(const WeaponType& new_weapon) {
+        weapon.reset(new WeaponType(new_weapon));
+    }
+
     bool collides_with(const Thing&, bool = false);
     Thing* collide_at(bool = false);
 
@@ -79,7 +89,7 @@ class Thing {
 };
 
 extern std::vector<std::unique_ptr<Thing>> things;
-extern std::vector<std::unique_ptr<Thing>> spawn_queue;
+extern std::vector<Thing*> spawn_queue;
 
 class Humanoid : public Thing {
   public:
@@ -89,9 +99,7 @@ class Humanoid : public Thing {
     bool can_reveal_tiles;
 
   public:
-    Humanoid(int x, int y, RL::Color body_color, bool can_reveal_tiles)
-        : Thing(x, y), body_color(body_color),
-          can_reveal_tiles(can_reveal_tiles) {}
+    Humanoid(int, int, RL::Color, bool);
 
     std::vector<Sprite> draw() override;
 
@@ -142,7 +150,8 @@ class Projectile : public Thing {
 
 class Bullet : public Projectile {
   public:
-    Bullet(int dest_x, int dest_y) : Projectile(dest_x, dest_y, 30, 10) {}
+    Bullet(int dest_x, int dest_y, int range, int damage)
+        : Projectile(dest_x, dest_y, range, damage) {}
 
     std::vector<Sprite> draw() override;
 };

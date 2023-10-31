@@ -1,12 +1,17 @@
 #include "things.hpp"
 #include "actions.hpp"
 #include "grid.hpp"
+#include "weapons.hpp"
 
 Thing::Thing(int x, int y)
     : x(x), y(y), ongoing(new Noop), max_health(1), cur_health(1), ghost(false),
       deletion_mark(false), stepped(false) {}
 
 void Thing::tick() {
+    if (weapon.get() != nullptr && weapon->turns_until_ready > 0) {
+        weapon->turns_until_ready--;
+    }
+
     think();
 
     ongoing->tick(*this);

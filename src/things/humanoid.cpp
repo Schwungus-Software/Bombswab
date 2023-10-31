@@ -1,9 +1,16 @@
 #include "actions.hpp"
 #include "camera.hpp"
 #include "grid.hpp"
+#include "raylib.h"
 #include "spritesheet.hpp"
 #include "things.hpp"
 #include "utils.hpp"
+#include "weapons.hpp"
+
+Humanoid::Humanoid(int x, int y, RL::Color body_color, bool can_reveal_tiles)
+    : Thing(x, y), body_color(body_color), can_reveal_tiles(can_reveal_tiles) {
+    equip(rifle);
+}
 
 std::vector<Thing::Sprite> Humanoid::draw() {
     // TODO: flip correctly when going up/down too.
@@ -51,11 +58,12 @@ void Humanoid::collide() {
 void Humanoid::before_death() {
     play_sound_local(human_die);
 
-    auto corpse = std::make_unique<Corpse>(x, y);
+    auto corpse = new Corpse(x, y);
 
     corpse->max_health = max_health;
     corpse->cur_health = std::max(1, max_health / 2);
-    spawn_queue.push_back(std::move(corpse));
+
+    spawn_queue.push_back(corpse);
 }
 
 void Player::act() {
@@ -65,9 +73,10 @@ void Player::act() {
 
     const int movement_length = 8;
 
-    if (RL::IsMouseButtonPressed(RL::MOUSE_BUTTON_LEFT)) {
+    if (RL::IsMouseButtonDown(RL::MOUSE_BUTTON_LEFT) &&
+        weapon->turns_until_ready == 0) {
         const auto dest = mouse_to_grid();
-        ongoing.reset(new Shoot(new Bullet(dest.x, dest.y)));
+        ongoing.reset(new Shoot(dest));
     } else if (RL::IsKeyDown(RL::KEY_LEFT)) {
         ongoing.reset(new Move(Direction::LEFT, movement_length));
     } else if (RL::IsKeyDown(RL::KEY_RIGHT)) {
