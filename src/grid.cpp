@@ -1,7 +1,9 @@
 #include <cmath>
 #include <functional>
 
+#include "camera.hpp"
 #include "grid.hpp"
+#include "raylib.h"
 #include "spritesheet.hpp"
 #include "things.hpp"
 #include "utils.hpp"
@@ -194,8 +196,7 @@ bool Grid::is_active(RL::Vector2 pos) {
 }
 
 RL::Vector2 mouse_to_grid() {
-    // TODO: refactor after the camera is added.
-    auto mouse = RL::GetMousePosition();
+    auto mouse = RL::GetScreenToWorld2D(RL::GetMousePosition(), get_camera());
     mouse.x = static_cast<int>(mouse.x / SPRITE_DIM);
     mouse.y = static_cast<int>(mouse.y / SPRITE_DIM);
     return mouse;

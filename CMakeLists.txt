@@ -12,6 +12,7 @@ add_executable(
   "src/thing.cpp"
   "src/grid.cpp"
   "src/audio.cpp"
+  "src/camera.cpp"
   "src/line.cpp"
   "src/actions/die.cpp"
   "src/actions/move.cpp"

@@ -1,5 +1,7 @@
 #include "actions.hpp"
+#include "camera.hpp"
 #include "grid.hpp"
+#include "spritesheet.hpp"
 #include "things.hpp"
 #include "utils.hpp"
 
@@ -57,6 +59,10 @@ void Humanoid::before_death() {
 }
 
 void Player::act() {
+    camera_center = pos();
+    camera_center.x *= SPRITE_DIM;
+    camera_center.y *= SPRITE_DIM;
+
     const int movement_length = 8;
 
     if (RL::IsMouseButtonPressed(RL::MOUSE_BUTTON_LEFT)) {

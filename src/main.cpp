@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "audio.hpp"
+#include "camera.hpp"
 #include "grid.hpp"
 #include "raylib.h"
 #include "rlwrap.hpp"
@@ -58,6 +59,7 @@ int main(int argc, char* argv[]) {
                       [](const auto& thing) { return thing->deletion_mark; });
 
         RL::BeginDrawing();
+        RL::BeginMode2D(get_camera());
         {
             RL::ClearBackground({69, 42, 16, 255});
 
@@ -85,6 +87,7 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+        RL::EndMode2D();
         RL::EndDrawing();
     }
 
