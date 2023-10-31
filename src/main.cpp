@@ -6,6 +6,7 @@
 #include "audio.hpp"
 #include "camera.hpp"
 #include "grid.hpp"
+#include "particles.hpp"
 #include "raylib.h"
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
@@ -42,49 +43,17 @@ int main(int argc, char* argv[]) {
     grid.generate();
 
     while (!RL::WindowShouldClose()) {
-        for (const auto& thing : things) {
-            thing->tick();
-        }
-
-        grid.tick();
-
-        // TODO: revise when the time comes.
-        while (!spawn_queue.empty()) {
-            things.push_back(std::unique_ptr<Thing>(spawn_queue.back()));
-            spawn_queue.pop_back();
-        }
-
-        std::erase_if(things,
-                      [](const auto& thing) { return thing->deletion_mark; });
+        tick_particles();
+        tick_things();
 
         RL::BeginDrawing();
         RL::BeginMode2D(get_camera());
         {
             RL::ClearBackground({69, 42, 16, 255});
 
-            for (std::size_t i = 0; i < GRID_SIZE; i++) {
-                auto& tile = grid.tiles[i];
-
-                const auto x = static_cast<float>(i % GRID_WIDTH);
-                const auto y = static_cast<float>(i / GRID_HEIGHT);
-
-                const auto sprite = tile.is_closed() ? Tile::CLOSED : tile.kind;
-                draw<Tile>(sprite, {x, y});
-            }
-
-            for (const auto& thing : things) {
-                const auto& tile_at = grid.tile_at(thing->pos());
-
-                if (tile_at.is_closed()) {
-                    continue;
-                }
-
-                const auto layers = thing->draw();
-
-                for (const auto& layer : layers) {
-                    draw<ThingSprite>(layer, thing->pos());
-                }
-            }
+            draw_grid();
+            draw_things();
+            draw_particles();
         }
         RL::EndMode2D();
         RL::EndDrawing();

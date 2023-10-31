@@ -42,4 +42,6 @@ class Grid {
 
 extern Grid grid;
 
+void draw_grid();
+
 RL::Vector2 mouse_to_grid();

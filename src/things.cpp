@@ -3,6 +3,39 @@
 #include "grid.hpp"
 #include "weapons.hpp"
 
+void tick_things() {
+    for (const auto& thing : things) {
+        thing->tick();
+    }
+
+    grid.tick();
+
+    // TODO: revise when the time comes.
+    while (!spawn_queue.empty()) {
+        things.push_back(std::unique_ptr<Thing>(spawn_queue.back()));
+        spawn_queue.pop_back();
+    }
+
+    std::erase_if(things,
+                  [](const auto& thing) { return thing->deletion_mark; });
+}
+
+void draw_things() {
+    for (const auto& thing : things) {
+        const auto& tile_at = grid.tile_at(thing->pos());
+
+        if (tile_at.is_closed()) {
+            continue;
+        }
+
+        const auto layers = thing->draw();
+
+        for (const auto& layer : layers) {
+            draw<ThingSprite>(layer, thing->pos());
+        }
+    }
+}
+
 Thing::Thing(int x, int y)
     : x(x), y(y), ongoing(new Noop), max_health(1), cur_health(1), ghost(false),
       deletion_mark(false), stepped(false) {}
