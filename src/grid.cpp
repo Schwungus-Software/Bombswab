@@ -129,11 +129,15 @@ void Grid::tick() {
                     break;
                 }
                 case Tile::MINE_HIT:
-                    for (int xx = -1; xx < 2; xx++) {
-                        for (int yy = -1; yy < 2; yy++) {
+                    for (int xx = -1; xx <= 1; xx++) {
+                        for (int yy = -1; yy <= 1; yy++) {
+                            const RL::Vector2 neighbor_pos(pos.x + xx,
+                                                           pos.y + yy);
+                            open(neighbor_pos);
+
                             for (const auto& thing : things) {
-                                if (thing->x == (pos.x + xx) &&
-                                    thing->y == (pos.y + yy)) {
+                                if (thing->x == neighbor_pos.x &&
+                                    thing->y == neighbor_pos.y) {
                                     thing->damage(20);
                                 }
                             }
@@ -177,12 +181,12 @@ void Grid::open(RL::Vector2 pos) {
 
     switch (tile.kind) {
         case Tile::CLOSED:
-        case Tile::MINE_HIT:
             tile.kind = Tile::EMPTY;
             break;
         case Tile::MINE:
+            // TODO: play a bomb activation sound (bleep-bleep).
             tile.kind = Tile::MINE_HIT;
-            tile.turns_till_active = 1;
+            tile.turns_till_active = 30;
             break;
         default:
             // Don't care about the rest.

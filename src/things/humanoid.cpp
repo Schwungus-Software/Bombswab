@@ -66,9 +66,8 @@ void Player::act() {
     const int movement_length = 8;
 
     if (RL::IsMouseButtonPressed(RL::MOUSE_BUTTON_LEFT)) {
-        const auto dir = mouse_to_grid();
-
-        ongoing.reset(new Shoot(new Bullet(dir.x, dir.y)));
+        const auto dest = mouse_to_grid();
+        ongoing.reset(new Shoot(new Bullet(dest.x, dest.y)));
     } else if (RL::IsKeyDown(RL::KEY_LEFT)) {
         ongoing.reset(new Move(Direction::LEFT, movement_length));
     } else if (RL::IsKeyDown(RL::KEY_RIGHT)) {
