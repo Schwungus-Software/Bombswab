@@ -9,7 +9,6 @@
 #include "raylib.h"
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
-#include "thing.hpp"
 #include "things.hpp"
 
 std::vector<std::unique_ptr<Thing>> things;

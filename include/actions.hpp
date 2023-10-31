@@ -1,4 +1,23 @@
+#pragma once
+
 #include "things.hpp"
+
+class Action {
+  public:
+    int length;
+
+    Action(int length) : length(length) {}
+
+    virtual void perform(Thing&) = 0;
+    void tick(Thing&);
+    virtual ~Action() {}
+};
+
+class Noop : public Action {
+  public:
+    Noop() : Action(1) {}
+    void perform(Thing&) override {}
+};
 
 class Die : public Action {
   public:

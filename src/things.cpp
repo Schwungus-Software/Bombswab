@@ -1,4 +1,4 @@
-#include "thing.hpp"
+#include "things.hpp"
 #include "actions.hpp"
 #include "grid.hpp"
 
@@ -72,12 +72,8 @@ void Thing::play_sound_local(const RL::Sound& snd) {
     play_sound_at(snd, pos());
 }
 
+Thing::~Thing() = default;
+
 RL::Vector2 Thing::pos() {
     return {static_cast<float>(x), static_cast<float>(y)};
-}
-
-void Action::tick(Thing& actor) {
-    if (length-- == 1) {
-        perform(actor);
-    }
 }

@@ -25,7 +25,7 @@ Grid::Grid() {}
 void Grid::generate() {
     for (std::size_t i = 0; i < GRID_SIZE; i++) {
         auto& tile = tiles[i];
-        tile.kind = RL::GetRandomValue(1, 7) == 1 ? Tile::MINE : Tile::CLOSED;
+        tile.kind = RL::GetRandomValue(1, 5) == 1 ? Tile::MINE : Tile::CLOSED;
         tile.turns_till_active = 0;
     }
 }

@@ -1,7 +1,82 @@
 #pragma once
 
+#include <memory>
+#include <optional>
+#include <vector>
+
+#include "audio.hpp"
 #include "line.hpp"
-#include "thing.hpp"
+#include "spritesheet.hpp"
+
+class Action;
+
+enum class Direction {
+    LEFT,
+    RIGHT,
+    UP,
+    DOWN,
+};
+
+class Thing {
+  public:
+    // Movement.
+
+    int x, y;
+    Direction dir;
+
+    // Actions.
+
+    std::unique_ptr<Action> ongoing;
+
+    // Health.
+
+    int max_health, cur_health;
+
+    // Main flags.
+
+    // Phases through walls.
+    bool ghost;
+
+    // Misc. flags.
+
+    bool deletion_mark;
+    bool stepped;
+
+    Thing(int, int);
+
+    void tick();
+
+    /// Called every turn.
+    virtual void think() {}
+
+    /// Called every time an action can be taken.
+    virtual void act() {}
+
+    /// Called whenever a collision with a wall occurs.
+    virtual void collide();
+
+    using Sprite = TintedSprite<ThingSprite>;
+
+    /// Draw this thing in multiple layers.
+    virtual std::vector<Sprite> draw() = 0;
+
+    /// Deal damage and return `true` if it was fatal.
+    bool damage(int);
+
+    bool collides_with(const Thing&, bool = false);
+    Thing* collide_at(bool = false);
+
+    void play_sound(const RL::Sound&);
+    void play_sound_local(const RL::Sound&);
+
+    RL::Vector2 pos();
+
+    virtual void step() {}
+
+    virtual void before_death() {}
+
+    virtual ~Thing();
+};
 
 extern std::vector<std::unique_ptr<Thing>> things;
 extern std::vector<std::unique_ptr<Thing>> spawn_queue;

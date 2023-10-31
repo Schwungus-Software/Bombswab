@@ -9,11 +9,12 @@ file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}")
 add_executable(
   BasharQuest
   "src/spritesheet.cpp"
-  "src/thing.cpp"
   "src/grid.cpp"
   "src/audio.cpp"
   "src/camera.cpp"
   "src/line.cpp"
+  "src/actions.cpp"
+  "src/things.cpp"
   "src/actions/die.cpp"
   "src/actions/move.cpp"
   "src/actions/shoot.cpp"
