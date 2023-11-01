@@ -15,6 +15,7 @@ add_executable(
   "src/line.cpp"
   "src/actions.cpp"
   "src/things.cpp"
+  "src/items.cpp"
   "src/weapons.cpp"
   "src/particles.cpp"
   "src/actions/die.cpp"

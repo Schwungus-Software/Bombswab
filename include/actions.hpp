@@ -39,8 +39,10 @@ class Move : public Action {
 class Shoot : public Action {
   public:
     RL::Vector2 destination;
+    HandSlot slot;
 
-    Shoot(RL::Vector2 destination) : Action(1), destination(destination) {}
+    Shoot(RL::Vector2 destination, HandSlot slot)
+        : Action(1), destination(destination), slot(slot) {}
 
     void perform(Thing&) override;
 };

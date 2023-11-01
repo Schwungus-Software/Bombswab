@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "audio.hpp"
+#include "items.hpp"
 #include "line.hpp"
 #include "spritesheet.hpp"
 
@@ -18,6 +19,13 @@ enum class Direction {
     DOWN,
 };
 
+enum class HandSlot {
+    LEFT,
+    RIGHT,
+};
+
+const std::size_t POCKET_COUNT = 4;
+
 class Thing {
   public:
     // Movement.
@@ -29,8 +37,8 @@ class Thing {
 
     std::unique_ptr<Action> ongoing;
 
-    // TODO: all things have a weapon until we add a proper inventory.
-    std::unique_ptr<AbstractWeapon> weapon;
+    ItemSlot lh_slot, rh_slot;
+    std::array<ItemSlot, POCKET_COUNT> pockets;
 
     // Health.
 
@@ -67,17 +75,13 @@ class Thing {
     /// Deal damage and return `true` if it was fatal.
     bool damage(int);
 
-    /// Equip a weapon from one of the constants.
-    template <typename WeaponType>
-    void equip(const WeaponType& new_weapon) {
-        weapon.reset(new WeaponType(new_weapon));
-    }
-
     bool collides_with(const Thing&, bool = false);
     Thing* collide_at(bool = false);
 
     void play_sound(const RL::Sound&);
     void play_sound_local(const RL::Sound&);
+
+    ItemSlot& hand_slot(HandSlot);
 
     RL::Vector2 pos();
 

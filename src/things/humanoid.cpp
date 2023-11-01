@@ -1,6 +1,9 @@
+#include <utility>
+
 #include "actions.hpp"
 #include "camera.hpp"
 #include "grid.hpp"
+#include "items.hpp"
 #include "raylib.h"
 #include "spritesheet.hpp"
 #include "things.hpp"
@@ -9,7 +12,13 @@
 
 Humanoid::Humanoid(int x, int y, RL::Color body_color, bool can_reveal_tiles)
     : Thing(x, y), body_color(body_color), can_reveal_tiles(can_reveal_tiles) {
-    equip(rifle);
+    const auto rifle = new Rifle;
+    rifle->clip_slot.contents.reset(new BulletClip(50));
+    lh_slot.contents.reset(rifle);
+
+    const auto pistol = new Pistol;
+    pistol->clip_slot.contents.reset(new BulletClip(10));
+    rh_slot.contents.reset(pistol);
 }
 
 std::vector<Thing::Sprite> Humanoid::draw() {
@@ -77,10 +86,42 @@ void Player::act() {
 
     const int movement_length = 8;
 
-    if (RL::IsMouseButtonDown(RL::MOUSE_BUTTON_LEFT) && weapon->turns_until_ready == 0) {
-        const auto dest = mouse_to_grid();
-        ongoing.reset(new Shoot(dest));
-    } else if (RL::IsKeyDown(RL::KEY_LEFT)) {
+    const std::vector<std::pair<RL::MouseButton, HandSlot>> weapon_slots{
+        {RL::MOUSE_BUTTON_LEFT, HandSlot::LEFT},
+        {RL::MOUSE_BUTTON_RIGHT, HandSlot::RIGHT},
+    };
+
+    for (const auto& pair : weapon_slots) {
+        const auto& slot = hand_slot(pair.second);
+        const auto item = slot.contents.get();
+
+        if (item == nullptr) {
+            continue;
+        }
+
+        const auto weapon = dynamic_cast<AbstractWeapon*>(item);
+
+        if (weapon == nullptr) {
+            continue;
+        }
+
+        if (!weapon->has_ammo()) {
+            // TODO: play "no ammo" sound.
+            continue;
+        }
+
+        if (weapon->turns_until_ready > 0) {
+            continue;
+        }
+
+        if (RL::IsMouseButtonDown(pair.first)) {
+            const auto dest = mouse_to_grid();
+            ongoing.reset(new Shoot(dest, pair.second));
+            return;
+        }
+    }
+
+    if (RL::IsKeyDown(RL::KEY_LEFT)) {
         ongoing.reset(new Move(Direction::LEFT, movement_length));
     } else if (RL::IsKeyDown(RL::KEY_RIGHT)) {
         ongoing.reset(new Move(Direction::RIGHT, movement_length));

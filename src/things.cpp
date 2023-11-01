@@ -40,8 +40,11 @@ Thing::Thing(int x, int y)
       deletion_mark(false), stepped(false) {}
 
 void Thing::tick() {
-    if (weapon.get() != nullptr && weapon->turns_until_ready > 0) {
-        weapon->turns_until_ready--;
+    lh_slot.tick();
+    rh_slot.tick();
+
+    for (auto& slot : pockets) {
+        slot.tick();
     }
 
     think();
@@ -114,8 +117,16 @@ void Thing::play_sound_local(const RL::Sound& snd) {
     play_sound_at(snd, pos());
 }
 
-Thing::~Thing() = default;
+ItemSlot& Thing::hand_slot(HandSlot hand_slot) {
+    if (hand_slot == HandSlot::LEFT) {
+        return lh_slot;
+    } else {
+        return rh_slot;
+    }
+}
 
 RL::Vector2 Thing::pos() {
     return {static_cast<float>(x), static_cast<float>(y)};
 }
+
+Thing::~Thing() = default;
