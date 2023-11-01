@@ -43,8 +43,7 @@ class Spritesheet {
 
     constexpr Spritesheet() : Spritesheet(0, 0, nullptr) {}
 
-    constexpr Spritesheet(const int width, const int height,
-                          const char* sheet_path)
+    constexpr Spritesheet(const int width, const int height, const char* sheet_path)
         : width(width), height(height), sheet_path(sheet_path) {}
 
     RL::Texture2D texture() const {
@@ -68,12 +67,10 @@ template <typename SpriteType>
 static const Spritesheet<SpriteType> spritesheet_for;
 
 template <>
-inline const Spritesheet<ThingSprite> spritesheet_for<ThingSprite>{
-    6, 1, "assets/spritesheet.png"};
+inline const Spritesheet<ThingSprite> spritesheet_for<ThingSprite>{6, 1, "assets/spritesheet.png"};
 
 template <>
-inline const Spritesheet<Tile> spritesheet_for<Tile>{16, 1,
-                                                     "assets/tilesheet.png"};
+inline const Spritesheet<Tile> spritesheet_for<Tile>{16, 1, "assets/tilesheet.png"};
 
 template <typename SpriteType>
 struct TintedSprite {
@@ -90,8 +87,7 @@ template <typename SpriteType>
 void draw(const TintedSprite<SpriteType>& sprite, RL::Vector2 position) {
     const auto& spritesheet = spritesheet_for<SpriteType>;
 
-    static const auto sheet = spritesheet.texture(),
-                      sheet_flipped = spritesheet.texture_flipped();
+    static const auto sheet = spritesheet.texture(), sheet_flipped = spritesheet.texture_flipped();
 
     RL::Vector2 px_position;
     px_position.x = position.x * SPRITE_DIM;

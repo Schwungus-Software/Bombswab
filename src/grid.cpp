@@ -50,8 +50,7 @@ GridTile& Grid::tile_at(RL::Vector2 pos) {
         return empty;
     }
 
-    const auto i = static_cast<std::size_t>(pos.x) +
-                   (static_cast<std::size_t>(pos.y) * GRID_WIDTH);
+    const auto i = static_cast<std::size_t>(pos.x) + (static_cast<std::size_t>(pos.y) * GRID_WIDTH);
 
     return (i < 0 || i >= GRID_SIZE) ? empty : tiles[i];
 }
@@ -146,16 +145,13 @@ void Grid::tick() {
 
                     for (int xx = -1; xx <= 1; xx++) {
                         for (int yy = -1; yy <= 1; yy++) {
-                            const RL::Vector2 neighbor_pos(pos.x + xx,
-                                                           pos.y + yy);
+                            const RL::Vector2 neighbor_pos(pos.x + xx, pos.y + yy);
                             open(neighbor_pos);
 
-                            spawn_particle(neighbor_pos, Particle::EXPLOSION,
-                                           20);
+                            spawn_particle(neighbor_pos, Particle::EXPLOSION, 20);
 
                             for (const auto& thing : things) {
-                                if (thing->x == neighbor_pos.x &&
-                                    thing->y == neighbor_pos.y) {
+                                if (thing->x == neighbor_pos.x && thing->y == neighbor_pos.y) {
                                     thing->damage(20);
                                 }
                             }

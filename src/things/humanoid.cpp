@@ -14,8 +14,7 @@ Humanoid::Humanoid(int x, int y, RL::Color body_color, bool can_reveal_tiles)
 
 std::vector<Thing::Sprite> Humanoid::draw() {
     // TODO: flip correctly when going up/down too.
-    const auto gun =
-        dir == Direction::LEFT ? -ThingSprite::GUN : ThingSprite::GUN;
+    const auto gun = dir == Direction::LEFT ? -ThingSprite::GUN : ThingSprite::GUN;
     return {{ThingSprite::MAN, body_color}, {gun}};
 }
 
@@ -78,8 +77,7 @@ void Player::act() {
 
     const int movement_length = 8;
 
-    if (RL::IsMouseButtonDown(RL::MOUSE_BUTTON_LEFT) &&
-        weapon->turns_until_ready == 0) {
+    if (RL::IsMouseButtonDown(RL::MOUSE_BUTTON_LEFT) && weapon->turns_until_ready == 0) {
         const auto dest = mouse_to_grid();
         ongoing.reset(new Shoot(dest));
     } else if (RL::IsKeyDown(RL::KEY_LEFT)) {

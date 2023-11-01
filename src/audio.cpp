@@ -1,7 +1,7 @@
 #include "audio.hpp"
 
-RL::Sound footstep1, footstep2, footstep3, footstep4, footstep5, footstep6,
-    rifle_fire, human_die, explode1, explode2, explode3, pain1, pain2, pain3;
+RL::Sound footstep1, footstep2, footstep3, footstep4, footstep5, footstep6, rifle_fire, human_die,
+    explode1, explode2, explode3, pain1, pain2, pain3;
 
 void load_sounds() {
     static bool ready = false;
@@ -28,7 +28,9 @@ void load_sounds() {
     ready = true;
 }
 
-void play_sound_global(const RL::Sound& snd) { RL::PlaySound(snd); }
+void play_sound_global(const RL::Sound& snd) {
+    RL::PlaySound(snd);
+}
 
 void play_sound_at(const RL::Sound& snd, RL::Vector2) {
     // TODO: implement with panning.

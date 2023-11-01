@@ -1,8 +1,7 @@
 #include "particles.hpp"
 
 template <>
-const Spritesheet<Particle> spritesheet_for<Particle>{
-    1, 1, "assets/particle_sheet.png"};
+const Spritesheet<Particle> spritesheet_for<Particle>{1, 1, "assets/particle_sheet.png"};
 
 std::vector<ParticleInstance> particles;
 

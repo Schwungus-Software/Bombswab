@@ -16,8 +16,7 @@ void tick_things() {
         spawn_queue.pop_back();
     }
 
-    std::erase_if(things,
-                  [](const auto& thing) { return thing->deletion_mark; });
+    std::erase_if(things, [](const auto& thing) { return thing->deletion_mark; });
 }
 
 void draw_things() {
@@ -55,7 +54,9 @@ void Thing::tick() {
     }
 }
 
-void Thing::collide() { ongoing.reset(new Die); }
+void Thing::collide() {
+    ongoing.reset(new Die);
+}
 
 bool Thing::damage(int amount) {
     cur_health -= amount;
@@ -105,7 +106,9 @@ Thing* Thing::collide_at(bool ghost_bypass) {
     return nullptr;
 }
 
-void Thing::play_sound(const RL::Sound& snd) { play_sound_global(snd); }
+void Thing::play_sound(const RL::Sound& snd) {
+    play_sound_global(snd);
+}
 
 void Thing::play_sound_local(const RL::Sound& snd) {
     play_sound_at(snd, pos());

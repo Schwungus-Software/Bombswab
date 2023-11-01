@@ -131,7 +131,9 @@ class Enemy : public Humanoid {
 
 class Corpse : public Thing {
   public:
-    Corpse(int x, int y) : Thing(x, y) { ghost = true; }
+    Corpse(int x, int y) : Thing(x, y) {
+        ghost = true;
+    }
 
     std::vector<Sprite> draw() override;
 
@@ -147,8 +149,7 @@ class Projectile : public Thing {
     std::size_t cur_point;
 
     Projectile(int dest_x, int dest_y, int range, int damage)
-        : Thing(0, 0), range(range), damage(damage), dest_x(dest_x),
-          dest_y(dest_y), cur_point(0) {}
+        : Thing(0, 0), range(range), damage(damage), dest_x(dest_x), dest_y(dest_y), cur_point(0) {}
 
     void act() override;
 };

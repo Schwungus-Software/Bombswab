@@ -14,8 +14,7 @@ void Shoot::perform(Thing& actor) {
 
     const auto projectile = actor.weapon->spawn_projectile(destination);
 
-    projectile->trajectory =
-        rasterize(actor.x, actor.y, projectile->dest_x, projectile->dest_y);
+    projectile->trajectory = rasterize(actor.x, actor.y, projectile->dest_x, projectile->dest_y);
 
     projectile->x = projectile->trajectory[0].x;
     projectile->y = projectile->trajectory[0].y;

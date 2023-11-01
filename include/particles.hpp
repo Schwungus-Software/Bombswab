@@ -1,10 +1,11 @@
 #pragma once
 
+#include <cstdint>
 #include <vector>
 
 #include "spritesheet.hpp"
 
-enum Particle {
+enum Particle : std::int8_t {
     EXPLOSION = 1,
 };
 
