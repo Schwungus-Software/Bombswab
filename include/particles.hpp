@@ -4,10 +4,7 @@
 #include <vector>
 
 #include "spritesheet.hpp"
-
-enum Particle : std::int8_t {
-    EXPLOSION = 1,
-};
+#include "spritesheets.hpp"
 
 struct ParticleInstance {
     RL::Vector2 position;

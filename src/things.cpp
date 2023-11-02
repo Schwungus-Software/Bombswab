@@ -37,7 +37,8 @@ void draw_things() {
 
 Thing::Thing(int x, int y)
     : x(x), y(y), ongoing(new Noop), max_health(1), cur_health(1), ghost(false),
-      deletion_mark(false), stepped(false) {}
+      deletion_mark(false), stepped(false), walk_dir(Direction::RIGHT),
+      action_dir(Direction::RIGHT) {}
 
 void Thing::tick() {
     lh_slot.tick();
@@ -59,6 +60,22 @@ void Thing::tick() {
 
 void Thing::collide() {
     ongoing.reset(new Die);
+}
+
+SpriteFlip Thing::action_dir_to_flip() {
+    switch (action_dir) {
+        case Direction::LEFT:
+            return SpriteFlip::NEG_180;
+        case Direction::RIGHT:
+            return SpriteFlip::DEG_0;
+        case Direction::UP:
+            return SpriteFlip::NEG_270;
+        case Direction::DOWN:
+            return SpriteFlip::DEG_90;
+    }
+
+    // To silence a warning.
+    return SpriteFlip::DEG_0;
 }
 
 bool Thing::damage(int amount) {

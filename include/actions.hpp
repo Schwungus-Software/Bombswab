@@ -10,7 +10,9 @@ class Action {
     Action(int length) : length(length) {}
 
     virtual void perform(Thing&) = 0;
+
     void tick(Thing&);
+
     virtual ~Action() {}
 };
 

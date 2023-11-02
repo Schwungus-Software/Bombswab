@@ -5,6 +5,7 @@
 
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
+#include "spritesheets.hpp"
 
 const std::size_t GRID_WIDTH = 32;
 const std::size_t GRID_HEIGHT = 32;

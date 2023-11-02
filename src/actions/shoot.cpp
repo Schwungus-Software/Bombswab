@@ -27,6 +27,23 @@ void Shoot::perform(Thing& actor) {
     projectile->x = projectile->trajectory[0].x;
     projectile->y = projectile->trajectory[0].y;
 
+    const auto dx = projectile->dest_x - actor.x;
+    const auto dy = projectile->dest_y - actor.y;
+
+    if (std::abs(dx) >= std::abs(dy)) {
+        if (dx >= 0) {
+            actor.action_dir = Direction::RIGHT;
+        } else {
+            actor.action_dir = Direction::LEFT;
+        }
+    } else {
+        if (dy >= 0) {
+            actor.action_dir = Direction::DOWN;
+        } else {
+            actor.action_dir = Direction::UP;
+        }
+    }
+
     weapon->turns_until_ready = weapon->shoot_cooldown;
 
     spawn_queue.push_back(std::move(projectile));

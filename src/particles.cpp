@@ -1,8 +1,5 @@
 #include "particles.hpp"
 
-template <>
-const Spritesheet<Particle> spritesheet_for<Particle>{1, 1, "assets/particle_sheet.png"};
-
 std::vector<ParticleInstance> particles;
 
 void spawn_particle(RL::Vector2 pos, Particle index, int lifetime) {
@@ -10,11 +7,7 @@ void spawn_particle(RL::Vector2 pos, Particle index, int lifetime) {
 }
 
 void tick_particles() {
-    for (auto& particle : particles) {
-        particle.lifetime--;
-    }
-
-    std::erase_if(particles, [](const auto& p) { return p.lifetime <= 0; });
+    std::erase_if(particles, [](auto& p) { return --p.lifetime <= 0; });
 }
 
 void draw_particles() {

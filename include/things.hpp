@@ -8,6 +8,7 @@
 #include "items.hpp"
 #include "line.hpp"
 #include "spritesheet.hpp"
+#include "spritesheets.hpp"
 
 class Action;
 class AbstractWeapon;
@@ -28,10 +29,12 @@ const std::size_t POCKET_COUNT = 4;
 
 class Thing {
   public:
+    using Sprite = TintedSprite<ThingSprite>;
+
     // Movement.
 
     int x, y;
-    Direction dir;
+    Direction walk_dir, action_dir;
 
     // Actions.
 
@@ -67,10 +70,10 @@ class Thing {
     /// Called whenever a collision with a wall occurs.
     virtual void collide();
 
-    using Sprite = TintedSprite<ThingSprite>;
-
     /// Draw this thing in multiple layers.
     virtual std::vector<Sprite> draw() = 0;
+
+    SpriteFlip action_dir_to_flip();
 
     /// Deal damage and return `true` if it was fatal.
     bool damage(int);

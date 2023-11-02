@@ -21,9 +21,70 @@ Humanoid::Humanoid(int x, int y, RL::Color body_color, bool can_reveal_tiles)
 }
 
 std::vector<Thing::Sprite> Humanoid::draw() {
-    // TODO: flip correctly when going up/down too.
-    const auto gun = dir == Direction::LEFT ? -ThingSprite::GUN : ThingSprite::GUN;
-    return {{ThingSprite::MAN, body_color}, {gun}};
+    const Sprite guy{ThingSprite::MAN, body_color};
+    std::vector<Sprite> layers;
+
+    const auto push = [this, &guy,
+                       &layers](std::vector<Item::Sprite>& sprites, const bool flip_again) {
+        switch (action_dir) {
+            case Direction::UP:
+            case Direction::DOWN:
+                if (flip_again) {
+                    layers.push_back(guy);
+                }
+            default:
+                break;
+        }
+
+        for (auto& sprite : sprites) {
+            sprite.offset = 8.0 / SPRITE_DIM;
+
+            switch (action_dir) {
+                case Direction::LEFT:
+                case Direction::RIGHT:
+                    sprite.flip = action_dir_to_flip();
+                    sprite.cross = flip_again ? 2.0 / SPRITE_DIM : -1.0 / SPRITE_DIM;
+
+                    if (!flip_again) {
+                        sprite.offset -= 1.0 / SPRITE_DIM;
+                    }
+
+                    break;
+                default:
+                    sprite.flip = flip_again ? ::flip(action_dir_to_flip()) : action_dir_to_flip();
+                    sprite.cross = -4.0 / SPRITE_DIM;
+                    break;
+            }
+
+            layers.push_back(sprite);
+        }
+
+        switch (action_dir) {
+            case Direction::LEFT:
+            case Direction::RIGHT:
+                if (flip_again) {
+                    layers.push_back(guy);
+                }
+            default:
+                break;
+        }
+    };
+
+    if (lh_slot.contents != nullptr) {
+        auto sprites = lh_slot.contents->draw();
+        push(sprites, true);
+    }
+
+    if (rh_slot.contents != nullptr) {
+        auto sprites = rh_slot.contents->draw();
+        push(sprites, false);
+    }
+
+    if (layers.empty()) {
+        layers.push_back(guy);
+    }
+
+    return layers;
 }
 
 void Humanoid::step() {
@@ -46,7 +107,7 @@ void Humanoid::collide() {
         grid.open(pos());
     }
 
-    switch (dir) {
+    switch (walk_dir) {
         case Direction::LEFT:
             x++;
             break;

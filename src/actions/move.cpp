@@ -17,7 +17,8 @@ void Move::perform(Thing& actor) {
             break;
     }
 
-    actor.dir = dir;
+    actor.walk_dir = dir;
+    actor.action_dir = actor.walk_dir;
 
     if (grid.tile_at(actor.pos()).is_closed()) {
         if (!actor.ghost) {

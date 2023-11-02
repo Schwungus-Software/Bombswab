@@ -2,6 +2,9 @@
 
 #include <memory>
 #include <string>
+#include <vector>
+
+#include "spritesheets.hpp"
 
 class Thing;
 
@@ -9,7 +12,11 @@ struct ItemSlot;
 
 class Item {
   public:
+    using Sprite = TintedSprite<ThingSprite>;
+
     virtual std::string name() = 0;
+
+    virtual std::vector<Sprite> draw() = 0;
 
     virtual void tick() {}
 
@@ -28,7 +35,7 @@ struct ItemSlot {
     std::unique_ptr<Item> contents;
 
     void tick() {
-        if (contents.get() != nullptr) {
+        if (contents != nullptr) {
             contents->tick();
         }
     }
@@ -52,6 +59,8 @@ class BulletClip : public SimpleItem {
     std::size_t ammo_count;
 
     BulletClip(std::size_t ammo_count) : SimpleItem("Clip"), ammo_count(ammo_count) {}
-};
 
-#include "things.hpp"
+    std::vector<Sprite> draw() override {
+        return {ThingSprite::BULLET};
+    }
+};
