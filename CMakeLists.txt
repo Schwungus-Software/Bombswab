@@ -15,6 +15,7 @@ add_executable(
   "src/line.cpp"
   "src/actions.cpp"
   "src/things.cpp"
+  "src/item_slot.cpp"
   "src/items.cpp"
   "src/weapons.cpp"
   "src/particles.cpp"
@@ -25,6 +26,7 @@ add_executable(
   "src/things/projectile.cpp"
   "src/things/misc.cpp"
   "src/utils.cpp"
+  "src/misc.cpp"
   "src/main.cpp")
 
 set_target_properties(BasharQuest PROPERTIES CXX_STANDARD 20

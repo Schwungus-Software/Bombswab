@@ -1,5 +1,6 @@
 #include "actions.hpp"
 #include "grid.hpp"
+#include "things.hpp"
 
 void Move::perform(Thing& actor) {
     switch (dir) {
@@ -20,7 +21,9 @@ void Move::perform(Thing& actor) {
     actor.walk_dir = dir;
     actor.action_dir = actor.walk_dir;
 
-    if (grid.tile_at(actor.pos()).is_closed()) {
+    const auto& tile = grid.tile_at(actor.pos());
+
+    if (tile.is_closed()) {
         if (!actor.ghost) {
             actor.collide();
         }

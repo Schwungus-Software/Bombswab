@@ -1,7 +1,9 @@
 #pragma once
 
+#include "misc.hpp"
 #include "rlwrap.hpp"
-#include "things.hpp"
+
+class Thing;
 
 class Action {
   public:

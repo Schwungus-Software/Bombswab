@@ -32,10 +32,20 @@ Projectile* BulletWeapon::spawn_projectile(RL::Vector2 destination) {
     return new Bullet(destination.x, destination.y, range, damage);
 }
 
-void BulletWeapon::reload(BulletClip* clip) {
-    const auto old = clip_slot.contents.release();
-    clip_slot.contents.reset(clip);
+Action* BulletWeapon::insert(Thing& actor, ItemSlot& source) {
+    const auto clip = dynamic_cast<BulletClip*>(source.contents.release());
 
-    // TODO: drop `old` on the ground.
-    delete old;
+    if (clip != nullptr) {
+        if (clip_slot.contents != nullptr) {
+            const auto old = clip_slot.contents.release();
+            // TODO: drop `old` on the ground.
+            delete old;
+        }
+
+        clip_slot.contents.reset(clip);
+
+        return new Noop;
+    }
+
+    return nullptr;
 }

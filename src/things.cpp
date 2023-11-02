@@ -38,7 +38,7 @@ void draw_things() {
 Thing::Thing(int x, int y)
     : x(x), y(y), ongoing(new Noop), max_health(1), cur_health(1), ghost(false),
       deletion_mark(false), stepped(false), walk_dir(Direction::RIGHT),
-      action_dir(Direction::RIGHT) {}
+      action_dir(Direction::RIGHT), last_selected(nullptr) {}
 
 void Thing::tick() {
     lh_slot.tick();

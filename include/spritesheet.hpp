@@ -4,22 +4,10 @@
 #include <cstdint>
 #include <stdexcept>
 
+#include "misc.hpp"
 #include "rlwrap.hpp"
 
 const int SPRITE_DIM = 16;
-
-enum class SpriteFlip {
-    DEG_0,
-    NEG_0,
-    DEG_90,
-    NEG_90,
-    DEG_180,
-    NEG_180,
-    DEG_270,
-    NEG_270,
-};
-
-SpriteFlip flip(const SpriteFlip&);
 
 template <typename SpriteType>
 class Spritesheet {

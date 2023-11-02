@@ -4,11 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "actions.hpp"
+#include "item_slot.hpp"
 #include "spritesheets.hpp"
-
-class Thing;
-
-struct ItemSlot;
 
 class Item {
   public:
@@ -20,25 +18,15 @@ class Item {
 
     virtual void tick() {}
 
-    virtual bool activate(Thing&) {
-        return false;
+    virtual Action* activate(Thing& actor) {
+        return nullptr;
     }
 
-    virtual bool insert(Thing&, ItemSlot&) {
-        return false;
+    virtual Action* insert(Thing& actor, ItemSlot& source) {
+        return nullptr;
     }
 
     virtual ~Item();
-};
-
-struct ItemSlot {
-    std::unique_ptr<Item> contents;
-
-    void tick() {
-        if (contents != nullptr) {
-            contents->tick();
-        }
-    }
 };
 
 class SimpleItem : public Item {

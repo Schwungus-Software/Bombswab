@@ -18,6 +18,9 @@ Humanoid::Humanoid(int x, int y, RL::Color body_color, bool can_reveal_tiles)
     const auto pistol = new Pistol;
     pistol->clip_slot.contents.reset(new BulletClip(10));
     rh_slot.contents.reset(pistol);
+
+    const auto clip = new BulletClip(100);
+    pockets[3].contents.reset(clip);
 }
 
 std::vector<Thing::Sprite> Humanoid::draw() {
@@ -139,7 +142,52 @@ void Player::act() {
     camera_center.x *= SPRITE_DIM;
     camera_center.y *= SPRITE_DIM;
 
-    const int movement_length = 8;
+    const std::vector<std::pair<RL::KeyboardKey, ItemSlot*>> item_slots{
+        {RL::KEY_Q, &lh_slot},      {RL::KEY_E, &rh_slot},        {RL::KEY_ONE, &pockets[0]},
+        {RL::KEY_TWO, &pockets[1]}, {RL::KEY_THREE, &pockets[2]}, {RL::KEY_FOUR, &pockets[3]},
+    };
+
+    if (last_selected != nullptr) {
+        if (RL::IsKeyPressed(RL::KEY_SPACE)) {
+            const auto action = last_selected->contents->activate(*this);
+
+            if (action != nullptr) {
+                ongoing.reset(action);
+            }
+
+            return;
+        }
+    }
+
+    for (const auto& pair : item_slots) {
+        if (!RL::IsKeyPressed(pair.first)) {
+            continue;
+        }
+
+        const auto slot = pair.second;
+
+        if (last_selected == nullptr) {
+            last_selected = slot;
+            return;
+        } else {
+            if (last_selected->contents != nullptr && slot->contents != nullptr) {
+                const auto action = slot->contents->insert(*this, *last_selected);
+
+                if (action != nullptr) {
+                    ongoing.reset(action);
+                }
+
+                last_selected = nullptr;
+                return;
+            } else if (last_selected->contents != nullptr && slot->contents == nullptr) {
+                const auto tmp = last_selected->contents.release();
+                slot->contents.reset(tmp);
+
+                last_selected = nullptr;
+                return;
+            }
+        }
+    }
 
     const std::vector<std::pair<RL::MouseButton, HandSlot>> weapon_slots{
         {RL::MOUSE_BUTTON_LEFT, HandSlot::LEFT},
@@ -172,9 +220,12 @@ void Player::act() {
         if (RL::IsMouseButtonDown(pair.first)) {
             const auto dest = mouse_to_grid();
             ongoing.reset(new Shoot(dest, pair.second));
+            last_selected = nullptr;
             return;
         }
     }
+
+    const int movement_length = 8;
 
     if (RL::IsKeyDown(RL::KEY_A)) {
         ongoing.reset(new Move(Direction::LEFT, movement_length));
@@ -184,7 +235,11 @@ void Player::act() {
         ongoing.reset(new Move(Direction::UP, movement_length));
     } else if (RL::IsKeyDown(RL::KEY_S)) {
         ongoing.reset(new Move(Direction::DOWN, movement_length));
+    } else {
+        return;
     }
+
+    last_selected = nullptr;
 }
 
 void Enemy::act() {

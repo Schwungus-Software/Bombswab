@@ -37,7 +37,7 @@ class BulletWeapon : public AbstractWeapon {
 
     bool has_ammo() override;
 
-    void reload(BulletClip* clip);
+    Action* insert(Thing& actor, ItemSlot& source) override;
 };
 
 class Rifle : public BulletWeapon {

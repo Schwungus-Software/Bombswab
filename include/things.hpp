@@ -5,25 +5,11 @@
 #include <vector>
 
 #include "audio.hpp"
+#include "item_slot.hpp"
 #include "items.hpp"
 #include "line.hpp"
 #include "spritesheet.hpp"
 #include "spritesheets.hpp"
-
-class Action;
-class AbstractWeapon;
-
-enum class Direction {
-    LEFT,
-    RIGHT,
-    UP,
-    DOWN,
-};
-
-enum class HandSlot {
-    LEFT,
-    RIGHT,
-};
 
 const std::size_t POCKET_COUNT = 4;
 
@@ -42,6 +28,8 @@ class Thing {
 
     ItemSlot lh_slot, rh_slot;
     std::array<ItemSlot, POCKET_COUNT> pockets;
+
+    ItemSlot* last_selected;
 
     // Health.
 
