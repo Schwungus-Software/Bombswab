@@ -21,67 +21,62 @@ Humanoid::Humanoid(int x, int y, RL::Color body_color, bool can_reveal_tiles)
 }
 
 std::vector<Thing::Sprite> Humanoid::draw() {
-    const Sprite guy{ThingSprite::MAN, body_color};
     std::vector<Sprite> layers;
 
-    const auto push = [this, &guy,
-                       &layers](std::vector<Item::Sprite>& sprites, const bool flip_again) {
-        switch (action_dir) {
-            case Direction::UP:
-            case Direction::DOWN:
-                if (flip_again) {
-                    layers.push_back(guy);
-                }
-            default:
-                break;
+    const auto push_guy = [this, &layers]() { layers.push_back({ThingSprite::MAN, body_color}); };
+
+    const auto vertical = [this, &layers](const ItemSlot& slot, const bool left) {
+        if (slot.contents != nullptr) {
+            for (auto sprite : slot.contents->draw()) {
+                sprite.flip = left ? ::flip(action_dir_to_flip()) : action_dir_to_flip();
+                sprite.offset += 6.0 / SPRITE_DIM;
+                sprite.cross += 4.0 / SPRITE_DIM;
+                layers.push_back(sprite);
+            }
+        }
+    };
+
+    const auto horizontal = [this, &layers](const ItemSlot& slot, const bool back) {
+        if (slot.contents == nullptr) {
+            return;
         }
 
-        for (auto& sprite : sprites) {
-            sprite.offset = 8.0 / SPRITE_DIM;
+        for (auto sprite : slot.contents->draw()) {
+            sprite.flip = action_dir_to_flip();
 
-            switch (action_dir) {
-                case Direction::LEFT:
-                case Direction::RIGHT:
-                    sprite.flip = action_dir_to_flip();
-                    sprite.cross = flip_again ? 2.0 / SPRITE_DIM : -1.0 / SPRITE_DIM;
-
-                    if (!flip_again) {
-                        sprite.offset -= 1.0 / SPRITE_DIM;
-                    }
-
-                    break;
-                default:
-                    sprite.flip = flip_again ? ::flip(action_dir_to_flip()) : action_dir_to_flip();
-                    sprite.cross = -4.0 / SPRITE_DIM;
-                    break;
+            if (back) {
+                sprite.offset += 5.0 / SPRITE_DIM;
+                sprite.cross -= 2.0 / SPRITE_DIM;
+            } else {
+                sprite.offset += 6.0 / SPRITE_DIM;
+                sprite.cross += 1.0 / SPRITE_DIM;
             }
 
             layers.push_back(sprite);
         }
-
-        switch (action_dir) {
-            case Direction::LEFT:
-            case Direction::RIGHT:
-                if (flip_again) {
-                    layers.push_back(guy);
-                }
-            default:
-                break;
-        }
     };
 
-    if (lh_slot.contents != nullptr) {
-        auto sprites = lh_slot.contents->draw();
-        push(sprites, true);
-    }
-
-    if (rh_slot.contents != nullptr) {
-        auto sprites = rh_slot.contents->draw();
-        push(sprites, false);
-    }
-
-    if (layers.empty()) {
-        layers.push_back(guy);
+    switch (action_dir) {
+        case Direction::UP:
+            push_guy();
+            vertical(lh_slot, true);
+            vertical(rh_slot, false);
+            break;
+        case Direction::DOWN:
+            push_guy();
+            vertical(rh_slot, true);
+            vertical(lh_slot, false);
+            break;
+        case Direction::RIGHT:
+            horizontal(lh_slot, true);
+            push_guy();
+            horizontal(rh_slot, false);
+            break;
+        case Direction::LEFT:
+            horizontal(rh_slot, true);
+            push_guy();
+            horizontal(lh_slot, false);
+            break;
     }
 
     return layers;

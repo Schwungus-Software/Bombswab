@@ -49,7 +49,7 @@ class Rifle : public BulletWeapon {
     }
 
     std::vector<Sprite> draw() override {
-        return {ThingSprite::GUN};
+        return {ThingSprite::RIFLE};
     }
 };
 
@@ -62,7 +62,6 @@ class Pistol : public BulletWeapon {
     }
 
     std::vector<Sprite> draw() override {
-        // TODO: draw a pistol.
-        return {ThingSprite::GUN};
+        return {ThingSprite::PISTOL};
     }
 };

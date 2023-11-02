@@ -5,10 +5,11 @@
 enum ThingSprite : std::int8_t {
     MAN,
     CORPSE,
-    GUN,
+    RIFLE,
     SHOTGUN,
     ROCKET,
     BULLET,
+    PISTOL,
 };
 
 enum Tile : std::int8_t {
@@ -35,7 +36,7 @@ enum Particle : std::int8_t {
 };
 
 template <>
-inline const Spritesheet<ThingSprite> spritesheet_for<ThingSprite>{6, 1, "assets/spritesheet.png"};
+inline const Spritesheet<ThingSprite> spritesheet_for<ThingSprite>{7, 1, "assets/spritesheet.png"};
 
 template <>
 inline const Spritesheet<Tile> spritesheet_for<Tile>{16, 1, "assets/tilesheet.png"};
