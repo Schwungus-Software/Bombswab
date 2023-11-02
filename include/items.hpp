@@ -3,11 +3,23 @@
 #include <memory>
 #include <string>
 
+class Thing;
+
+struct ItemSlot;
+
 class Item {
   public:
     virtual std::string name() = 0;
 
     virtual void tick() {}
+
+    virtual bool activate(Thing&) {
+        return false;
+    }
+
+    virtual bool insert(Thing&, ItemSlot&) {
+        return false;
+    }
 
     virtual ~Item();
 };
@@ -41,3 +53,5 @@ class BulletClip : public SimpleItem {
 
     BulletClip(std::size_t ammo_count) : SimpleItem("Clip"), ammo_count(ammo_count) {}
 };
+
+#include "things.hpp"

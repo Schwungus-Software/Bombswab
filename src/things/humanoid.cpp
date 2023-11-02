@@ -4,7 +4,6 @@
 #include "camera.hpp"
 #include "grid.hpp"
 #include "items.hpp"
-#include "raylib.h"
 #include "spritesheet.hpp"
 #include "things.hpp"
 #include "utils.hpp"
@@ -121,13 +120,13 @@ void Player::act() {
         }
     }
 
-    if (RL::IsKeyDown(RL::KEY_LEFT)) {
+    if (RL::IsKeyDown(RL::KEY_A)) {
         ongoing.reset(new Move(Direction::LEFT, movement_length));
-    } else if (RL::IsKeyDown(RL::KEY_RIGHT)) {
+    } else if (RL::IsKeyDown(RL::KEY_D)) {
         ongoing.reset(new Move(Direction::RIGHT, movement_length));
-    } else if (RL::IsKeyDown(RL::KEY_UP)) {
+    } else if (RL::IsKeyDown(RL::KEY_W)) {
         ongoing.reset(new Move(Direction::UP, movement_length));
-    } else if (RL::IsKeyDown(RL::KEY_DOWN)) {
+    } else if (RL::IsKeyDown(RL::KEY_S)) {
         ongoing.reset(new Move(Direction::DOWN, movement_length));
     }
 }

@@ -4,7 +4,6 @@
 #include "camera.hpp"
 #include "grid.hpp"
 #include "particles.hpp"
-#include "raylib.h"
 #include "spritesheet.hpp"
 #include "things.hpp"
 #include "utils.hpp"
@@ -13,7 +12,7 @@ Grid grid;
 
 void draw_grid() {
     for (std::size_t i = 0; i < GRID_SIZE; i++) {
-        auto& tile = grid.tiles[i];
+        const auto& tile = grid.tiles[i];
 
         const auto x = static_cast<float>(i % GRID_WIDTH);
         const auto y = static_cast<float>(i / GRID_HEIGHT);

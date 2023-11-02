@@ -1,5 +1,4 @@
 #include "camera.hpp"
-#include "raylib.h"
 #include "spritesheet.hpp"
 
 RL::Vector2 camera_center;

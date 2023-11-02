@@ -7,7 +7,6 @@
 #include "camera.hpp"
 #include "grid.hpp"
 #include "particles.hpp"
-#include "raylib.h"
 #include "rlwrap.hpp"
 #include "spritesheet.hpp"
 #include "things.hpp"
