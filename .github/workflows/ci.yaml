@@ -12,18 +12,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install python3 cmake emscripten ninja-build
+          sudo apt install python3 cmake emscripten
       - name: Configure
-        run: emcmake cmake -DPLATFORM=Web -B build -S ${{github.workspace}} -G Ninja
+        run: emcmake cmake -DPLATFORM=Web -B build -S ${{github.workspace}}
       - name: Build with CMake
         run: cmake --build build -j 4
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v2
         with:
-          path: "build"
+          path: build
   deploy-to-gh-pages:
     needs: build-emscripten
     permissions:
@@ -67,13 +69,13 @@ jobs:
         if: matrix.config.os == 'ubuntu-latest'
         run: |
           sudo apt update
-          sudo apt install cmake gcc g++ ninja-build libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libgl-dev
+          sudo apt install cmake gcc g++ libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libgl-dev
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Configure CMake with selected compiler family
-        run: cmake -B build -S ${{github.workspace}} -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}}
+        run: cmake -B build -S ${{github.workspace}} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}}
       - name: Build with CMake
         run: cmake --build build -j 4
       - name: Copy the executable into the root folder
