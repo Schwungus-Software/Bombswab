@@ -20,7 +20,14 @@ void Shoot::perform(Thing& actor) {
         return;
     }
 
-    const auto projectile = weapon->spawn_projectile(destination);
+    weapon->turns_until_ready = weapon->shoot_cooldown;
+
+    const auto projectile = weapon->shoot(destination);
+
+    if (projectile == nullptr) {
+        // TODO: play "no ammo" sound.
+        return;
+    }
 
     projectile->trajectory = rasterize(actor.x, actor.y, projectile->dest_x, projectile->dest_y);
 
@@ -43,8 +50,6 @@ void Shoot::perform(Thing& actor) {
             actor.action_dir = Direction::UP;
         }
     }
-
-    weapon->turns_until_ready = weapon->shoot_cooldown;
 
     spawn_queue.push_back(std::move(projectile));
     actor.play_sound_local(rifle_fire);

@@ -10,20 +10,14 @@ BulletClip* BulletWeapon::clip() {
     return dynamic_cast<BulletClip*>(contents);
 }
 
-bool BulletWeapon::has_ammo() {
+Projectile* BulletWeapon::shoot(RL::Vector2 destination) {
     const auto clip = this->clip();
 
     if (clip == nullptr) {
-        return false;
+        return nullptr;
     }
 
-    return clip->ammo_count > 0;
-}
-
-Projectile* BulletWeapon::spawn_projectile(RL::Vector2 destination) {
-    const auto clip = this->clip();
-
-    if (clip == nullptr) {
+    if (clip->ammo_count == 0) {
         return nullptr;
     }
 
@@ -33,19 +27,19 @@ Projectile* BulletWeapon::spawn_projectile(RL::Vector2 destination) {
 }
 
 Action* BulletWeapon::insert(Thing& actor, ItemSlot& source) {
-    const auto clip = dynamic_cast<BulletClip*>(source.contents.release());
+    const auto clip = source.take_as<BulletClip>();
 
-    if (clip != nullptr) {
-        if (clip_slot.contents != nullptr) {
-            const auto old = clip_slot.contents.release();
-            // TODO: drop `old` on the ground.
-            delete old;
-        }
-
-        clip_slot.contents.reset(clip);
-
-        return new Noop;
+    if (clip == nullptr) {
+        return nullptr;
     }
 
-    return nullptr;
+    if (clip_slot.contents != nullptr) {
+        const auto old = clip_slot.contents.release();
+        // TODO: drop `old` on the ground.
+        delete old;
+    }
+
+    clip_slot.contents.reset(clip);
+
+    return new Noop;
 }

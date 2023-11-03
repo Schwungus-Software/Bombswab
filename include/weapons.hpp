@@ -18,9 +18,7 @@ class AbstractWeapon : public Item {
         }
     }
 
-    virtual Projectile* spawn_projectile(RL::Vector2) = 0;
-
-    virtual bool has_ammo() = 0;
+    virtual Projectile* shoot(RL::Vector2) = 0;
 };
 
 class BulletWeapon : public AbstractWeapon {
@@ -31,11 +29,9 @@ class BulletWeapon : public AbstractWeapon {
     BulletWeapon(int range, int damage, int shoot_cooldown)
         : AbstractWeapon(shoot_cooldown), range(range), damage(damage) {}
 
-    Projectile* spawn_projectile(RL::Vector2 destination) override;
+    Projectile* shoot(RL::Vector2 destination) override;
 
     BulletClip* clip();
-
-    bool has_ammo() override;
 
     Action* insert(Thing& actor, ItemSlot& source) override;
 };

@@ -208,11 +208,6 @@ void Player::act() {
             continue;
         }
 
-        if (!weapon->has_ammo()) {
-            // TODO: play "no ammo" sound.
-            continue;
-        }
-
         if (weapon->turns_until_ready > 0) {
             continue;
         }
