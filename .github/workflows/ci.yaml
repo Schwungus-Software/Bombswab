@@ -37,15 +37,20 @@ jobs:
           sudo apt update
           sudo apt install cmake gcc g++ libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libgl-dev
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: recursive
       - name: Configure CMake with selected compiler family
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} -S ${{github.workspace}}
       - name: Build with CMake
         run: cmake --build build -j 4
-      - name: Upload build artifacts
+      - name: Upload built executable
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.config.fancy_name}}
-          path: build/${{matrix.config.exe}} ${{github.workspace}}/assets
+          path: build/${{matrix.config.exe}}
+      - name: Upload assets
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{matrix.config.fancy_name}}
+          path: assets
