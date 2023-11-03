@@ -18,6 +18,7 @@ jobs:
               name: release-linux-gnu,
               fancy_name: Linux (GCC),
               exe: BasharQuest,
+              out: BasharQuest,
               os: ubuntu-latest,
               cxx: g++,
               cc: gcc,
@@ -26,6 +27,7 @@ jobs:
               name: release-win-msvc,
               fancy_name: Windows (MSVC),
               exe: Debug/BasharQuest.exe,
+              out: BasharQuest.exe,
               os: windows-latest,
               cxx: cl,
               cc: cl,
@@ -44,8 +46,10 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} -S ${{github.workspace}}
       - name: Build with CMake
         run: cmake --build build -j 4
+      - name: Copy the executable into the root folder
+        run: cp build/${{matrix.config.exe}} ${{matrix.config.out}}
       - name: Tar the distribution
-        run: tar -cvf ${{matrix.config.name}}.tar build/${{matrix.config.exe}} assets
+        run: tar -cvf ${{matrix.config.name}}.tar ${{matrix.config.out}} assets
       - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
