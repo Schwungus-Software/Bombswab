@@ -15,7 +15,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install python3 cmake emscripten
+          sudo apt install python3 cmake emscripten ninja-build
       - name: Configure
         run: emcmake cmake -DPLATFORM=Web -B build -S . -G Ninja
       - name: Build with CMake
