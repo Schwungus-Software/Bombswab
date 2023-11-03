@@ -1,0 +1,57 @@
+name: CI with CMake
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  upload-distribution:
+    name: Upload distribution for platform `${{matrix.config.name}}`
+    runs-on: ${{matrix.config.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              name: release-linux-gnu,
+              fancy_name: Linux (GCC),
+              exe: Bombswab,
+              out: Bombswab,
+              os: ubuntu-latest,
+              cxx: g++,
+              cc: gcc,
+            }
+          - {
+              name: release-win-msvc,
+              fancy_name: Windows (MSVC),
+              exe: Debug/Bombswab.exe,
+              out: Bombswab.exe,
+              os: windows-latest,
+              cxx: cl,
+              cc: cl,
+            }
+    steps:
+      - name: Install dependencies (Ubuntu)
+        if: matrix.config.os == 'ubuntu-latest'
+        run: |
+          sudo apt update
+          sudo apt install cmake gcc g++ libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev libgl-dev
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Configure CMake with selected compiler family
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} -S ${{github.workspace}}
+      - name: Build with CMake
+        run: cmake --build build -j 4
+      - name: Copy the executable into the root folder
+        run: cp build/${{matrix.config.exe}} ${{matrix.config.out}}
+      - name: Tar the distribution
+        run: tar -cvf ${{matrix.config.name}}.tar ${{matrix.config.out}} assets
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{matrix.config.fancy_name}}
+          path: ${{matrix.config.name}}.tar

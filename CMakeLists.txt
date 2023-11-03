@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
 add_subdirectory(external/raylib)
 
-project(BasharQuest)
+project(Bombswab)
 
 file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}")
 
@@ -46,12 +46,12 @@ set(HEADERS
   "include/utils.hpp"
   "include/misc.hpp")
 
-add_executable(BasharQuest ${SOURCES} ${HEADERS})
+add_executable(Bombswab ${SOURCES} ${HEADERS})
 
-set_target_properties(BasharQuest PROPERTIES
+set_target_properties(Bombswab PROPERTIES
   CXX_STANDARD 20
   CXX_STANDARD_REQUIRED ON)
 
-target_include_directories(BasharQuest PRIVATE include)
+target_include_directories(Bombswab PRIVATE include)
 
-target_link_libraries(BasharQuest raylib)
+target_link_libraries(Bombswab raylib)

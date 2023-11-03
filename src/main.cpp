@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
     const int screen_width = 800;
     const int screen_height = 600;
 
-    RL::InitWindow(screen_width, screen_height, "Bashar Quest");
+    RL::InitWindow(screen_width, screen_height, "Bombswab");
     RL::SetTargetFPS(60);
 
     RL::InitAudioDevice();
