@@ -5,7 +5,7 @@ add_subdirectory(external/raylib)
 project(Bombswab)
 
 if(EMSCRIPTEN)
-  set(WEB_FLAGS "-s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY")
+  set(WEB_FLAGS "--preload-file assets -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WEB_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WEB_FLAGS}")
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
