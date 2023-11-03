@@ -23,6 +23,8 @@ jobs:
         run: emcmake cmake -DPLATFORM=Web -B build -S ${{github.workspace}}
       - name: Build with CMake
         run: cmake --build build -j 4
+      - name: Create output dir
+        run: mkdir _site
       - name: Add index.html
         run: mv build/Bombswab.html _site/index.html
       - name: Move the rest of the files
