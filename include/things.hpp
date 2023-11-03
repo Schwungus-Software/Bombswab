@@ -115,6 +115,8 @@ class Player : public Humanoid {
     Player(int x, int y) : Humanoid(x, y, RL::BLUE, true) {}
 
     void act() override;
+
+    std::vector<Thing::Sprite> draw() override;
 };
 
 class Enemy : public Humanoid {

@@ -242,6 +242,34 @@ void Player::act() {
     last_selected = nullptr;
 }
 
+std::vector<Thing::Sprite> Player::draw() {
+    auto layers = Humanoid::draw();
+
+    if (last_selected != nullptr) {
+        float i = (pockets.size() * -0.5) + 0.5;
+
+        for (const auto& slot : pockets) {
+            auto cell = Thing::Sprite(ThingSprite::CELL);
+
+            cell.offset += i;
+            cell.cross = 1.0;
+            layers.push_back(cell);
+
+            if (slot.contents != nullptr) {
+                for (auto sprite : slot.contents->draw()) {
+                    sprite.offset += i;
+                    sprite.cross = 1.0;
+                    layers.push_back(sprite);
+                }
+            }
+
+            ++i;
+        }
+    }
+
+    return layers;
+}
+
 void Enemy::act() {
     // TODO: add AI.
 }
