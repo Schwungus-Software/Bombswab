@@ -26,7 +26,9 @@ jobs:
           languages: c-cpp
       - name: Build
         run: |
-          cmake --build build --config Debug --target all --
+          mkdir build
+          cmake -B build -S ${{github.workspace}}
+          cmake --build build --config Debug --target all
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
         with:
