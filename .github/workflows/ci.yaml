@@ -36,6 +36,11 @@ jobs:
     steps:
       - name: Install zip
         uses: montudor/action-zip@v1
+      - name: Install dependencies
+        if: matrix.config.os == ubuntu-latest
+        run: |
+          sudo apt update
+          sudo apt install libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev libxext-dev
       - name: Checkout
         uses: actions/checkout@v3
         with:
