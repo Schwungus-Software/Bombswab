@@ -7,8 +7,8 @@ on:
     branches: [main, github-actions]
 
 jobs:
-  produce-release-artifacts:
-    name: Produce release artifacts for platform `${{matrix.config.name}}`
+  upload-distribution:
+    name: Upload distribution for platform `${{matrix.config.name}}`
     runs-on: ${{matrix.config.os}}
     strategy:
       fail-fast: false
@@ -44,13 +44,10 @@ jobs:
         run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} -S ${{github.workspace}}
       - name: Build with CMake
         run: cmake --build build -j 4
-      - name: Upload built executable
+      - name: Tar the distribution
+        run: tar -cvf ${{matrix.config.name}}.tar build/${{matrix.config.exe}} assets
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{matrix.config.fancy_name}}
-          path: build/${{matrix.config.exe}}
-      - name: Upload assets
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{matrix.config.fancy_name}}
-          path: assets
+          path: ${{matrix.config.name}}.tar
