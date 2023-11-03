@@ -2,11 +2,41 @@ name: CI with CMake
 
 on:
   push:
-    branches: [main]
+    branches: [deploy]
   pull_request:
-    branches: [main]
+    branches: [deploy]
 
 jobs:
+  build-emscripten:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install python3 cmake emscripten
+      - name: Configure
+        run: emcmake cmake -DPLATFORM=Web -B build -S . -G Ninja
+      - name: Build with CMake
+        run: cmake --build build -j 4
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: "build"
+  deploy-to-gh-pages:
+    needs: build-emscripten
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
   upload-distribution:
     name: Upload distribution for platform `${{matrix.config.name}}`
     runs-on: ${{matrix.config.os}}
