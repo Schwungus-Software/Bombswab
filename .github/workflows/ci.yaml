@@ -8,6 +8,7 @@ on:
 
 jobs:
   build-emscripten:
+    name: Build the HTML5 version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,6 +28,7 @@ jobs:
         with:
           path: build
   deploy-to-gh-pages:
+    name: Deploy HTML5 to GitHub Pages
     needs: build-emscripten
     permissions:
       pages: write
