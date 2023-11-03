@@ -1,0 +1,56 @@
+name: CI with CMake
+
+on:
+  push:
+    branches: [main, github-actions]
+  pull_request:
+    branches: [main, github-actions]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  produce-release-artifacts:
+    name: Produce release artifacts for platform `${{matrix.config.name}}`
+    runs-on: ${{matrix.config.os}}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              name: release-linux-gnu,
+              fancy_name: Linux (GCC),
+              exe: BasharQuest,
+              os: ubuntu-latest,
+              cxx: g++,
+              cc: gcc,
+            }
+          - {
+              name: release-win-msvc,
+              fancy_name: Windows (MSVC),
+              exe: BasharQuest.exe,
+              os: windows-latest,
+              cxx: cl,
+              cc: cl,
+            }
+    steps:
+      - name: Install zip
+        uses: montudor/action-zip@v1
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: Configure CMake with selected compiler family
+        working-directory: ${{github.workspace}}
+        run: cmake -B ./build -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}}
+      - name: Build with CMake
+        working-directory: ${{github.workspace}}
+        run: cmake --build ./build -j 4
+      - name: Package into an archive
+        working-directory: ${{github.workspace}}/build
+        run: zip -qq -r ${{matrix.config.name}}.zip ${{matrix.config.exe}} assets/
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{matrix.config.fancy_name}}
+          path: ${{matrix.config.name}}.zip
