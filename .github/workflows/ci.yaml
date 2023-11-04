@@ -1,4 +1,4 @@
-name: CI with CMake
+name: Continuous integration
 
 on:
   push:
@@ -8,23 +8,33 @@ on:
 
 jobs:
   build-emscripten:
+    name: Build the HTML5 version
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
       - name: Install dependencies
         run: |
           sudo apt update
           sudo apt install python3 cmake emscripten
       - name: Configure
-        run: emcmake cmake -DPLATFORM=Web -B build -S . -G Ninja
+        run: emcmake cmake -DPLATFORM=Web -B build -S ${{github.workspace}}
       - name: Build with CMake
         run: cmake --build build -j 4
+      - name: Create output dir
+        run: mkdir _site
+      - name: Add index.html
+        run: mv build/Bombswab.html _site/index.html
+      - name: Move the rest of the files
+        run: mv build/Bombswab.data build/Bombswab.wasm build/Bombswab.js _site/
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v2
         with:
-          path: "build"
+          path: _site
   deploy-to-gh-pages:
+    name: Deploy HTML5 to GitHub Pages
     needs: build-emscripten
     permissions:
       pages: write
@@ -73,7 +83,7 @@ jobs:
         with:
           submodules: recursive
       - name: Configure CMake with selected compiler family
-        run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} -S ${{github.workspace}}
+        run: cmake -B build -S ${{github.workspace}} -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=${{matrix.config.cc}} -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}}
       - name: Build with CMake
         run: cmake --build build -j 4
       - name: Copy the executable into the root folder

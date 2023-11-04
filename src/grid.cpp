@@ -92,7 +92,7 @@ void Grid::tick() {
             const auto x = static_cast<float>(i % GRID_WIDTH);
             const auto y = static_cast<float>(i / GRID_HEIGHT);
 
-            const RL::Vector2 pos(x, y);
+            const RL::Vector2 pos{x, y};
 
             const auto count_mines = [this, &tile](RL::Vector2 pos) {
                 std::size_t mines = 0;
@@ -144,7 +144,7 @@ void Grid::tick() {
 
                     for (int xx = -1; xx <= 1; xx++) {
                         for (int yy = -1; yy <= 1; yy++) {
-                            const RL::Vector2 neighbor_pos(pos.x + xx, pos.y + yy);
+                            const RL::Vector2 neighbor_pos{pos.x + xx, pos.y + yy};
                             open(neighbor_pos);
 
                             spawn_particle(neighbor_pos, Particle::EXPLOSION, 20);
