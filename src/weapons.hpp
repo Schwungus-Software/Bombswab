@@ -1,8 +1,9 @@
 #pragma once
 
+#include "raylib.h"
+
 #include "actions.hpp"
 #include "items.hpp"
-#include "rlwrap.hpp"
 #include "things.hpp"
 
 class AbstractWeapon : public Item {
@@ -18,7 +19,7 @@ class AbstractWeapon : public Item {
         }
     }
 
-    virtual Projectile* shoot(RL::Vector2) = 0;
+    virtual Projectile* shoot(Vector2) = 0;
 };
 
 class BulletWeapon : public AbstractWeapon {
@@ -29,7 +30,7 @@ class BulletWeapon : public AbstractWeapon {
     BulletWeapon(int range, int damage, int shoot_cooldown)
         : AbstractWeapon(shoot_cooldown), range(range), damage(damage) {}
 
-    Projectile* shoot(RL::Vector2 destination) override;
+    Projectile* shoot(Vector2 destination) override;
 
     BulletClip* clip();
 

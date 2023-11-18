@@ -1,7 +1,8 @@
 #pragma once
 
+#include "raylib.h"
+
 #include "misc.hpp"
-#include "rlwrap.hpp"
 
 class Thing;
 
@@ -42,10 +43,10 @@ class Move : public Action {
 
 class Shoot : public Action {
   public:
-    RL::Vector2 destination;
+    Vector2 destination;
     HandSlot slot;
 
-    Shoot(RL::Vector2 destination, HandSlot slot)
+    Shoot(Vector2 destination, HandSlot slot)
         : Action(1), destination(destination), slot(slot) {}
 
     void perform(Thing&) override;

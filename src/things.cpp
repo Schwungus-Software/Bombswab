@@ -126,11 +126,11 @@ Thing* Thing::collide_at(bool ghost_bypass) {
     return nullptr;
 }
 
-void Thing::play_sound(const RL::Sound& snd) {
+void Thing::play_sound(const Sound& snd) {
     play_sound_global(snd);
 }
 
-void Thing::play_sound_local(const RL::Sound& snd) {
+void Thing::play_sound_local(const Sound& snd) {
     play_sound_at(snd, pos());
 }
 
@@ -142,7 +142,7 @@ ItemSlot& Thing::hand_slot(HandSlot hand_slot) {
     }
 }
 
-RL::Vector2 Thing::pos() {
+Vector2 Thing::pos() {
     return {static_cast<float>(x), static_cast<float>(y)};
 }
 

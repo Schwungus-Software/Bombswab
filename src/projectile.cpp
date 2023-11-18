@@ -1,6 +1,6 @@
 #include "actions.hpp"
 #include "line.hpp"
-#include "spritesheet.hpp"
+#include "spritesheet.tpp"
 #include "things.hpp"
 
 void Projectile::act() {

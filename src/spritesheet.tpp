@@ -4,8 +4,9 @@
 #include <cstdint>
 #include <stdexcept>
 
+#include "raylib.h"
+
 #include "misc.hpp"
-#include "rlwrap.hpp"
 
 const int SPRITE_DIM = 16;
 
@@ -20,40 +21,40 @@ class Spritesheet {
     constexpr Spritesheet(const int width, const int height, const char* sheet_path)
         : width(width), height(height), sheet_path(sheet_path) {}
 
-    RL::Texture2D texture() const {
+    Texture2D texture() const {
         if (sheet_path == nullptr) {
             throw std::invalid_argument("sheet_path cannot be null; this means you're using a "
                                         "spritesheet that doesn't have a defined set of sprites");
         }
 
-        static const auto texture = RL::LoadTexture(sheet_path);
+        static const auto texture = LoadTexture(sheet_path);
         return texture;
     }
 
-    RL::Texture2D texture_flipped(SpriteFlip flip) const {
-        const auto load_texture_flipped = [this](RL::Texture2D texture, SpriteFlip flip) {
-            const auto img = RL::LoadImageFromTexture(texture);
+    Texture2D texture_flipped(SpriteFlip flip) const {
+        const auto load_texture_flipped = [this](Texture2D texture, SpriteFlip flip) {
+            const auto img = LoadImageFromTexture(texture);
 
-            auto result = RL::ImageCopy(img);
-            RL::ImageClearBackground(&result, {0, 0, 0, 0});
+            auto result = ImageCopy(img);
+            ImageClearBackground(&result, {0, 0, 0, 0});
 
             for (float y = 0.0; y < height; y += 1.0) {
                 for (float x = 0.0; x < width; x += 1.0) {
-                    const RL::Rectangle dest{
+                    const Rectangle dest{
                         x * SPRITE_DIM, y * SPRITE_DIM, SPRITE_DIM, SPRITE_DIM};
 
-                    auto flipped = RL::ImageFromImage(img, dest);
+                    auto flipped = ImageFromImage(img, dest);
 
                     switch (flip) {
                         case SpriteFlip::DEG_270:
                         case SpriteFlip::NEG_270:
-                            RL::ImageRotateCW(&flipped);
+                            ImageRotateCW(&flipped);
                         case SpriteFlip::DEG_180:
                         case SpriteFlip::NEG_180:
-                            RL::ImageRotateCW(&flipped);
+                            ImageRotateCW(&flipped);
                         case SpriteFlip::DEG_90:
                         case SpriteFlip::NEG_90:
-                            RL::ImageRotateCW(&flipped);
+                            ImageRotateCW(&flipped);
                         case SpriteFlip::DEG_0:
                         case SpriteFlip::NEG_0:
                             // Do nothing.
@@ -63,24 +64,24 @@ class Spritesheet {
                     switch (flip) {
                         case SpriteFlip::NEG_0:
                         case SpriteFlip::NEG_180:
-                            RL::ImageFlipVertical(&flipped);
+                            ImageFlipVertical(&flipped);
                             break;
                         case SpriteFlip::NEG_90:
                         case SpriteFlip::NEG_270:
-                            RL::ImageFlipHorizontal(&flipped);
+                            ImageFlipHorizontal(&flipped);
                             break;
                         default:
                             // Do nothing.
                             break;
                     }
 
-                    RL::ImageDraw(
-                        &result, flipped, {0, 0, SPRITE_DIM, SPRITE_DIM}, dest, RL::WHITE
+                    ImageDraw(
+                        &result, flipped, {0, 0, SPRITE_DIM, SPRITE_DIM}, dest, WHITE
                     );
                 }
             }
 
-            return RL::LoadTextureFromImage(result);
+            return LoadTextureFromImage(result);
         };
 
         return load_texture_flipped(this->texture(), flip);
@@ -93,7 +94,7 @@ static const Spritesheet<SpriteType> spritesheet_for;
 template <typename SpriteType>
 struct TintedSprite {
     int sprite_idx;
-    RL::Color tint;
+    Color tint;
 
     SpriteFlip flip;
     float offset, cross;
@@ -101,14 +102,14 @@ struct TintedSprite {
     TintedSprite() = delete;
 
     TintedSprite(int idx, SpriteFlip flip = SpriteFlip::DEG_0)
-        : TintedSprite(idx, RL::WHITE, flip) {}
+        : TintedSprite(idx, WHITE, flip) {}
 
-    TintedSprite(int idx, RL::Color tint, SpriteFlip flip = SpriteFlip::DEG_0)
+    TintedSprite(int idx, Color tint, SpriteFlip flip = SpriteFlip::DEG_0)
         : sprite_idx(idx), tint(tint), flip(flip), offset(0.0), cross(0.0) {}
 };
 
 template <typename SpriteType>
-void draw(const TintedSprite<SpriteType>& sprite, RL::Vector2 position) {
+void draw(const TintedSprite<SpriteType>& sprite, Vector2 position) {
     const auto& spritesheet = spritesheet_for<SpriteType>;
 
     static const auto sheet_deg_0 = spritesheet.texture_flipped(SpriteFlip::DEG_0),
@@ -120,15 +121,15 @@ void draw(const TintedSprite<SpriteType>& sprite, RL::Vector2 position) {
                       sheet_deg_270 = spritesheet.texture_flipped(SpriteFlip::DEG_270),
                       sheet_neg_270 = spritesheet.texture_flipped(SpriteFlip::NEG_270);
 
-    RL::Rectangle source;
+    Rectangle source;
     source.width = source.height = SPRITE_DIM;
 
     source.x = static_cast<int>(sprite.sprite_idx % spritesheet.width) * SPRITE_DIM;
     source.y = static_cast<int>(sprite.sprite_idx / spritesheet.width) * SPRITE_DIM;
 
-    RL::Texture active_sheet;
+    Texture active_sheet;
 
-    RL::Vector2 px_position;
+    Vector2 px_position;
     px_position.x = position.x;
     px_position.y = position.y;
 
@@ -178,5 +179,5 @@ void draw(const TintedSprite<SpriteType>& sprite, RL::Vector2 position) {
     px_position.x *= SPRITE_DIM;
     px_position.y *= SPRITE_DIM;
 
-    RL::DrawTextureRec(active_sheet, source, px_position, sprite.tint);
+    DrawTextureRec(active_sheet, source, px_position, sprite.tint);
 }

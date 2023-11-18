@@ -4,12 +4,12 @@
 #include "camera.hpp"
 #include "grid.hpp"
 #include "items.hpp"
-#include "spritesheet.hpp"
+#include "spritesheet.tpp"
 #include "things.hpp"
-#include "utils.hpp"
+#include "utils.tpp"
 #include "weapons.hpp"
 
-Humanoid::Humanoid(int x, int y, RL::Color body_color, bool can_reveal_tiles)
+Humanoid::Humanoid(int x, int y, Color body_color, bool can_reveal_tiles)
     : Thing(x, y), body_color(body_color), can_reveal_tiles(can_reveal_tiles) {
     const auto rifle = new Rifle;
     rifle->clip_slot.contents.reset(new BulletClip(50));
@@ -142,13 +142,13 @@ void Player::act() {
     camera_center.x *= SPRITE_DIM;
     camera_center.y *= SPRITE_DIM;
 
-    const std::vector<std::pair<RL::KeyboardKey, ItemSlot*>> item_slots{
-        {RL::KEY_Q, &lh_slot},      {RL::KEY_E, &rh_slot},        {RL::KEY_ONE, &pockets[0]},
-        {RL::KEY_TWO, &pockets[1]}, {RL::KEY_THREE, &pockets[2]}, {RL::KEY_FOUR, &pockets[3]},
+    const std::vector<std::pair<KeyboardKey, ItemSlot*>> item_slots{
+        {KEY_Q, &lh_slot},      {KEY_E, &rh_slot},        {KEY_ONE, &pockets[0]},
+        {KEY_TWO, &pockets[1]}, {KEY_THREE, &pockets[2]}, {KEY_FOUR, &pockets[3]},
     };
 
     if (last_selected != nullptr) {
-        if (RL::IsKeyPressed(RL::KEY_SPACE)) {
+        if (IsKeyPressed(KEY_SPACE)) {
             const auto action = last_selected->contents->activate(*this);
 
             if (action != nullptr) {
@@ -160,7 +160,7 @@ void Player::act() {
     }
 
     for (const auto& pair : item_slots) {
-        if (!RL::IsKeyPressed(pair.first)) {
+        if (!IsKeyPressed(pair.first)) {
             continue;
         }
 
@@ -189,9 +189,9 @@ void Player::act() {
         }
     }
 
-    const std::vector<std::pair<RL::MouseButton, HandSlot>> weapon_slots{
-        {RL::MOUSE_BUTTON_LEFT, HandSlot::LEFT},
-        {RL::MOUSE_BUTTON_RIGHT, HandSlot::RIGHT},
+    const std::vector<std::pair<MouseButton, HandSlot>> weapon_slots{
+        {MOUSE_BUTTON_LEFT, HandSlot::LEFT},
+        {MOUSE_BUTTON_RIGHT, HandSlot::RIGHT},
     };
 
     for (const auto& pair : weapon_slots) {
@@ -212,7 +212,7 @@ void Player::act() {
             continue;
         }
 
-        if (RL::IsMouseButtonDown(pair.first)) {
+        if (IsMouseButtonDown(pair.first)) {
             const auto dest = mouse_to_grid();
             ongoing.reset(new Shoot(dest, pair.second));
             last_selected = nullptr;
@@ -222,13 +222,13 @@ void Player::act() {
 
     const int movement_length = 8;
 
-    if (RL::IsKeyDown(RL::KEY_A)) {
+    if (IsKeyDown(KEY_A)) {
         ongoing.reset(new Move(Direction::LEFT, movement_length));
-    } else if (RL::IsKeyDown(RL::KEY_D)) {
+    } else if (IsKeyDown(KEY_D)) {
         ongoing.reset(new Move(Direction::RIGHT, movement_length));
-    } else if (RL::IsKeyDown(RL::KEY_W)) {
+    } else if (IsKeyDown(KEY_W)) {
         ongoing.reset(new Move(Direction::UP, movement_length));
-    } else if (RL::IsKeyDown(RL::KEY_S)) {
+    } else if (IsKeyDown(KEY_S)) {
         ongoing.reset(new Move(Direction::DOWN, movement_length));
     } else {
         return;

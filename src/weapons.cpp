@@ -10,7 +10,7 @@ BulletClip* BulletWeapon::clip() {
     return dynamic_cast<BulletClip*>(contents);
 }
 
-Projectile* BulletWeapon::shoot(RL::Vector2 destination) {
+Projectile* BulletWeapon::shoot(Vector2 destination) {
     const auto clip = this->clip();
 
     if (clip == nullptr) {

@@ -2,7 +2,7 @@
 
 std::vector<ParticleInstance> particles;
 
-void spawn_particle(RL::Vector2 pos, Particle index, int lifetime) {
+void spawn_particle(Vector2 pos, Particle index, int lifetime) {
     particles.push_back({pos, index, lifetime});
 }
 

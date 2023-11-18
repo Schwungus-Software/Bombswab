@@ -8,7 +8,7 @@
 #include "item_slot.hpp"
 #include "items.hpp"
 #include "line.hpp"
-#include "spritesheet.hpp"
+#include "spritesheet.tpp"
 #include "spritesheets.hpp"
 
 const std::size_t POCKET_COUNT = 4;
@@ -69,12 +69,12 @@ class Thing {
     bool collides_with(const Thing&, bool = false);
     Thing* collide_at(bool = false);
 
-    void play_sound(const RL::Sound&);
-    void play_sound_local(const RL::Sound&);
+    void play_sound(const Sound&);
+    void play_sound_local(const Sound&);
 
     ItemSlot& hand_slot(HandSlot);
 
-    RL::Vector2 pos();
+    Vector2 pos();
 
     virtual void step() {}
     virtual void pain() {}
@@ -91,13 +91,13 @@ void draw_things();
 
 class Humanoid : public Thing {
   public:
-    RL::Color body_color;
+    Color body_color;
 
   protected:
     bool can_reveal_tiles;
 
   public:
-    Humanoid(int, int, RL::Color, bool);
+    Humanoid(int, int, Color, bool);
 
     std::vector<Sprite> draw() override;
 
@@ -112,7 +112,7 @@ class Humanoid : public Thing {
 
 class Player : public Humanoid {
   public:
-    Player(int x, int y) : Humanoid(x, y, RL::BLUE, true) {}
+    Player(int x, int y) : Humanoid(x, y, BLUE, true) {}
 
     void act() override;
 
@@ -121,7 +121,7 @@ class Player : public Humanoid {
 
 class Enemy : public Humanoid {
   public:
-    Enemy(int x, int y) : Humanoid(x, y, RL::RED, false) {}
+    Enemy(int x, int y) : Humanoid(x, y, RED, false) {}
 
     void act() override;
 };

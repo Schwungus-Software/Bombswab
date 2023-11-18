@@ -1,6 +1,6 @@
 #pragma once
 
-#include "spritesheet.hpp"
+#include "spritesheet.tpp"
 
 enum ThingSprite : std::int8_t {
     MAN,

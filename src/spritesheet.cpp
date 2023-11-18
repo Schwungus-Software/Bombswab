@@ -1,3 +1,0 @@
-#include "spritesheet.hpp"
-
-// Empty for now...

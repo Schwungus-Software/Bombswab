@@ -4,9 +4,9 @@
 #include "camera.hpp"
 #include "grid.hpp"
 #include "particles.hpp"
-#include "spritesheet.hpp"
+#include "spritesheet.tpp"
 #include "things.hpp"
-#include "utils.hpp"
+#include "utils.tpp"
 
 Grid grid;
 
@@ -37,12 +37,12 @@ Grid::Grid() {}
 void Grid::generate() {
     for (std::size_t i = 0; i < GRID_SIZE; i++) {
         auto& tile = tiles[i];
-        tile.kind = RL::GetRandomValue(1, 5) == 1 ? Tile::MINE : Tile::CLOSED;
+        tile.kind = GetRandomValue(1, 5) == 1 ? Tile::MINE : Tile::CLOSED;
         tile.turns_till_active = 0;
     }
 }
 
-GridTile& Grid::tile_at(RL::Vector2 pos) {
+GridTile& Grid::tile_at(Vector2 pos) {
     static GridTile empty{Tile::CLOSED, 0};
 
     if (pos.x < 0 || pos.y < 0 || pos.x > GRID_WIDTH || pos.y > GRID_HEIGHT) {
@@ -54,8 +54,8 @@ GridTile& Grid::tile_at(RL::Vector2 pos) {
     return (i < 0 || i >= GRID_SIZE) ? empty : tiles[i];
 }
 
-std::vector<RL::Vector2> Grid::neighbors_of(RL::Vector2 pos) {
-    std::vector<RL::Vector2> result;
+std::vector<Vector2> Grid::neighbors_of(Vector2 pos) {
+    std::vector<Vector2> result;
 
     for (int dx = -1; dx <= 1; dx++) {
         for (int dy = -1; dy <= 1; dy++) {
@@ -92,9 +92,9 @@ void Grid::tick() {
             const auto x = static_cast<float>(i % GRID_WIDTH);
             const auto y = static_cast<float>(i / GRID_HEIGHT);
 
-            const RL::Vector2 pos{x, y};
+            const Vector2 pos{x, y};
 
-            const auto count_mines = [this, &tile](RL::Vector2 pos) {
+            const auto count_mines = [this, &tile](Vector2 pos) {
                 std::size_t mines = 0;
 
                 for (const auto neighbor_pos : neighbors_of(pos)) {
@@ -144,7 +144,7 @@ void Grid::tick() {
 
                     for (int xx = -1; xx <= 1; xx++) {
                         for (int yy = -1; yy <= 1; yy++) {
-                            const RL::Vector2 neighbor_pos{pos.x + xx, pos.y + yy};
+                            const Vector2 neighbor_pos{pos.x + xx, pos.y + yy};
                             open(neighbor_pos);
 
                             spawn_particle(neighbor_pos, Particle::EXPLOSION, 20);
@@ -174,7 +174,7 @@ void Grid::tick() {
     } while (another_iteration);
 }
 
-void Grid::open_around(RL::Vector2 pos) {
+void Grid::open_around(Vector2 pos) {
     open({pos.x, pos.y - 1});
     open({pos.x - 1, pos.y - 1});
     open({pos.x - 1, pos.y});
@@ -185,7 +185,7 @@ void Grid::open_around(RL::Vector2 pos) {
     open({pos.x + 1, pos.y - 1});
 }
 
-void Grid::open(RL::Vector2 pos) {
+void Grid::open(Vector2 pos) {
     if (!is_active(pos)) {
         return;
     }
@@ -207,13 +207,13 @@ void Grid::open(RL::Vector2 pos) {
     }
 }
 
-bool Grid::is_active(RL::Vector2 pos) {
+bool Grid::is_active(Vector2 pos) {
     const auto& tile = tile_at(pos);
     return tile.turns_till_active == 0;
 }
 
-RL::Vector2 mouse_to_grid() {
-    auto mouse = RL::GetScreenToWorld2D(RL::GetMousePosition(), get_camera());
+Vector2 mouse_to_grid() {
+    auto mouse = GetScreenToWorld2D(GetMousePosition(), get_camera());
     mouse.x = static_cast<int>(mouse.x / SPRITE_DIM);
     mouse.y = static_cast<int>(mouse.y / SPRITE_DIM);
     return mouse;

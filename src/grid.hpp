@@ -3,8 +3,8 @@
 #include <array>
 #include <vector>
 
-#include "rlwrap.hpp"
-#include "spritesheet.hpp"
+#include "raylib.h"
+
 #include "spritesheets.hpp"
 
 const std::size_t GRID_WIDTH = 32;
@@ -29,20 +29,20 @@ class Grid {
 
     void generate();
 
-    GridTile& tile_at(RL::Vector2);
+    GridTile& tile_at(Vector2);
 
     void tick();
 
-    void open(RL::Vector2);
-    void open_around(RL::Vector2);
+    void open(Vector2);
+    void open_around(Vector2);
 
-    std::vector<RL::Vector2> neighbors_of(RL::Vector2);
+    std::vector<Vector2> neighbors_of(Vector2);
 
-    bool is_active(RL::Vector2);
+    bool is_active(Vector2);
 };
 
 extern Grid grid;
 
 void draw_grid();
 
-RL::Vector2 mouse_to_grid();
+Vector2 mouse_to_grid();
