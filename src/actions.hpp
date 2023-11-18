@@ -46,8 +46,7 @@ class Shoot : public Action {
     Vector2 destination;
     HandSlot slot;
 
-    Shoot(Vector2 destination, HandSlot slot)
-        : Action(1), destination(destination), slot(slot) {}
+    Shoot(Vector2 destination, HandSlot slot) : Action(1), destination(destination), slot(slot) {}
 
     void perform(Thing&) override;
 };

@@ -40,8 +40,7 @@ class Spritesheet {
 
             for (float y = 0.0; y < height; y += 1.0) {
                 for (float x = 0.0; x < width; x += 1.0) {
-                    const Rectangle dest{
-                        x * SPRITE_DIM, y * SPRITE_DIM, SPRITE_DIM, SPRITE_DIM};
+                    const Rectangle dest{x * SPRITE_DIM, y * SPRITE_DIM, SPRITE_DIM, SPRITE_DIM};
 
                     auto flipped = ImageFromImage(img, dest);
 
@@ -75,9 +74,7 @@ class Spritesheet {
                             break;
                     }
 
-                    ImageDraw(
-                        &result, flipped, {0, 0, SPRITE_DIM, SPRITE_DIM}, dest, WHITE
-                    );
+                    ImageDraw(&result, flipped, {0, 0, SPRITE_DIM, SPRITE_DIM}, dest, WHITE);
                 }
             }
 
@@ -101,8 +98,7 @@ struct TintedSprite {
 
     TintedSprite() = delete;
 
-    TintedSprite(int idx, SpriteFlip flip = SpriteFlip::DEG_0)
-        : TintedSprite(idx, WHITE, flip) {}
+    TintedSprite(int idx, SpriteFlip flip = SpriteFlip::DEG_0) : TintedSprite(idx, WHITE, flip) {}
 
     TintedSprite(int idx, Color tint, SpriteFlip flip = SpriteFlip::DEG_0)
         : sprite_idx(idx), tint(tint), flip(flip), offset(0.0), cross(0.0) {}

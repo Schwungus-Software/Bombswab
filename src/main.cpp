@@ -41,6 +41,8 @@ int main(int argc, char* argv[]) {
     grid.generate();
 
     while (!WindowShouldClose()) {
+        PollInputEvents();
+
         tick_particles();
         tick_things();
 

@@ -153,8 +153,7 @@ class Projectile : public Thing {
 
 class Bullet : public Projectile {
   public:
-    Bullet(int dest_x, int dest_y, int range, int damage)
-        : Projectile(dest_x, dest_y, range, damage) {}
+    Bullet(int dest_x, int dest_y, int range, int damage) : Projectile(dest_x, dest_y, range, damage) {}
 
     std::vector<Sprite> draw() override;
 };
