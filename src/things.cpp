@@ -3,6 +3,9 @@
 #include "grid.hpp"
 #include "weapons.hpp"
 
+std::vector<std::unique_ptr<Thing>> things;
+std::vector<Thing*> spawn_queue;
+
 void tick_things() {
     for (const auto& thing : things) {
         thing->tick();
