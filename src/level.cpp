@@ -1,4 +1,5 @@
 #include "level.hpp"
+#include "spritesheet.tpp"
 
 Level level;
 
