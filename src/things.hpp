@@ -78,7 +78,8 @@ class Thing {
 
     virtual void step() {}
     virtual void pain() {}
-    virtual void before_death() {}
+
+    virtual void died() {}
 
     virtual ~Thing();
 };
@@ -107,7 +108,7 @@ class Humanoid : public Thing {
 
     void pain() override;
 
-    void before_death() override;
+    void died() override;
 };
 
 class Player : public Humanoid {

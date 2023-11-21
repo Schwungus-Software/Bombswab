@@ -2,6 +2,6 @@
 #include "things.hpp"
 
 void Die::perform(Thing& actor) {
-    actor.before_death();
+    actor.died();
     actor.deletion_mark = true;
 }

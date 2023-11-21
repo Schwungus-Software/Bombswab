@@ -26,7 +26,12 @@ int main(int argc, char* argv[]) {
     while (!WindowShouldClose()) {
         BeginDrawing();
 
-        gsm.tick();
+        try {
+            gsm.tick();
+        } catch (const Exit& exit) {
+            // TODO: log the exit reason.
+            break;
+        }
 
         BeginMode2D(get_camera());
         {
@@ -37,6 +42,8 @@ int main(int argc, char* argv[]) {
             draw_particles();
         }
         EndMode2D();
+
+        gsm.overlay();
 
         EndDrawing();
     }

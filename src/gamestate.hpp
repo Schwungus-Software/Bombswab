@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <string>
 #include <variant>
 #include <vector>
 
@@ -41,11 +42,14 @@ extern struct GSM {
     ~GSM() = default;
 
     void tick();
+
+    void overlay();
 } gsm;
 
 class GameState {
   public:
     virtual GSM::Transition tick() = 0;
+    virtual void overlay() {}
 
     virtual ~GameState() = default;
 };
@@ -58,11 +62,22 @@ class PickLocation : public GameState {
     PickLocation();
 
     GSM::Transition tick() override;
+    void overlay() override;
 };
 
 class Play : public GameState {
   public:
     Play() = default;
+
+    GSM::Transition tick() override;
+};
+
+class MissionFailed : public GameState {
+  private:
+    std::size_t delay = 300;
+
+  public:
+    MissionFailed();
 
     GSM::Transition tick() override;
 };

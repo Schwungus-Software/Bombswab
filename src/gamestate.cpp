@@ -10,10 +10,6 @@
 GSM gsm(new PickLocation);
 
 void GSM::tick() {
-    if (stack.empty()) {
-        throw Exit("No more game states to process", true);
-    }
-
     const auto trans = stack.back()->tick();
 
     if (std::holds_alternative<Ignore>(trans)) {
@@ -23,10 +19,20 @@ void GSM::tick() {
         stack.push_back(std::unique_ptr<GameState>(push.next));
     } else if (std::holds_alternative<Pop>(trans)) {
         stack.pop_back();
+
+        if (stack.empty()) {
+            throw Exit("No more game states to process", true);
+        }
     } else if (std::holds_alternative<Replace>(trans)) {
         const auto replace = std::get<Replace>(trans);
         stack.back().reset(replace.next);
     }
+
+    return;
+}
+
+void GSM::overlay() {
+    stack.back()->overlay();
 }
 
 static void init_level() {
@@ -55,6 +61,8 @@ static void init_level() {
 }
 
 PickLocation::PickLocation() {
+    things.clear();
+
     grid_pos.x = GRID_WIDTH * SPRITE_DIM / 2.0;
     grid_pos.y = GRID_HEIGHT * SPRITE_DIM / 2.0;
 
@@ -92,8 +100,44 @@ GSM::Transition PickLocation::tick() {
     return GSM::Ignore();
 }
 
+void PickLocation::overlay() {
+    const auto color = static_cast<int>(GetTime()) % 2 == 0 ? RED : BLACK;
+
+    const auto text = "Pick a tile to drop off at";
+    const int font_size = 30;
+
+    const auto width = MeasureText(text, font_size);
+    const auto middle = GetScreenWidth() / 2 - width / 2;
+
+    DrawText(text, middle, 20, font_size, color);
+}
+
 GSM::Transition Play::tick() {
     tick_particles();
     tick_things();
-    return GSM::Ignore();
+
+    for (const auto& thing : things) {
+        if (dynamic_cast<Player*>(thing.get()) != nullptr) {
+            return GSM::Ignore();
+        }
+    }
+
+    return GSM::Replace(new MissionFailed);
+}
+
+MissionFailed::MissionFailed() {
+    // TODO: play the appropriate theme.
+}
+
+GSM::Transition MissionFailed::tick() {
+    tick_particles();
+    tick_things();
+
+    delay--;
+
+    if (delay == 0) {
+        return GSM::Replace(new PickLocation);
+    } else {
+        return GSM::Ignore();
+    }
 }

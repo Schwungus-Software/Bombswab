@@ -126,7 +126,7 @@ void Humanoid::pain() {
     play_sound_local(*pain);
 }
 
-void Humanoid::before_death() {
+void Humanoid::died() {
     play_sound_local(human_die);
 
     auto corpse = new Corpse(x, y);
