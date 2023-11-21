@@ -1,4 +1,11 @@
+#include <cmath>
+
+#include "raylib.h"
+#include "raymath.h"
+
 #include "audio.hpp"
+#include "camera.hpp"
+#include "grid.hpp"
 
 Sound footstep1, footstep2, footstep3, footstep4, footstep5, footstep6, rifle_fire, human_die, explode1, explode2,
     explode3, pain1, pain2, pain3;
@@ -32,7 +39,27 @@ void play_sound_global(const Sound& snd) {
     PlaySound(snd);
 }
 
-void play_sound_at(const Sound& snd, Vector2) {
-    // TODO: implement with panning.
-    PlaySound(snd);
+void play_sound_at(const Sound& snd, Vector2 pos) {
+    const auto listener = Vector2Scale(camera_center, 1.0 / SPRITE_DIM); // TODO: desync listener and camera_center
+    const float init_dist = Vector2Distance(listener, pos);
+
+    const float quiet_dist = 8.0; // can't hear jackshit from further
+    const float loud_dist = 1.0;  // max volume achieved here
+    const float range = quiet_dist - loud_dist;
+
+    const float x = Clamp(init_dist - loud_dist, 0.0f, range);
+    const float volume = 1.0 - std::pow(x / range, 2.0f); // TODO: square manually
+
+    const float source_angle = std::atan2(pos.y - listener.y, pos.x - listener.x);
+    const float x_dir = std::cos(source_angle);
+
+    const float base_pan = init_dist < 0.5 ? 0.5 : 0.5 - x_dir / 2.0;
+    const float shrink = 0.4;
+    const float pan = 0.5 + shrink * (base_pan - 0.5);
+
+    const Sound copy = snd;
+    SetSoundPan(copy, pan);
+    SetSoundVolume(copy, volume);
+
+    PlaySound(copy);
 }
