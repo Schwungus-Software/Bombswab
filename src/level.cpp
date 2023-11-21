@@ -45,7 +45,7 @@ void Level::draw() {
         const auto y = static_cast<float>(i / GRID_HEIGHT);
 
         const auto sprite = tile.is_closed() ? Tile::CLOSED : tile.kind;
-        draw<Tile>(sprite, {x, y});
+        ::draw<Tile>(sprite, {x, y});
     }
 
     for (const auto& thing : things) {
@@ -58,11 +58,11 @@ void Level::draw() {
         const auto layers = thing->draw();
 
         for (const auto& layer : layers) {
-            draw<ThingSprite>(layer, thing->pos());
+            ::draw<ThingSprite>(layer, thing->pos());
         }
     }
 
     for (const auto& particle : particles) {
-        draw<Particle>(particle.index, particle.position);
+        ::draw<Particle>(particle.index, particle.position);
     }
 }

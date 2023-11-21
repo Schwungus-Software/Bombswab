@@ -1,5 +1,8 @@
 #pragma once
 
+const int FRAMERATE = 60;
+const float TIMESTEP = 1.0 / FRAMERATE;
+
 enum class Direction {
     LEFT,
     RIGHT,

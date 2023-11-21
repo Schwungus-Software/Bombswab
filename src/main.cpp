@@ -1,6 +1,7 @@
 #include <memory>
 #include <vector>
 
+#include "misc.hpp"
 #include "raylib.h"
 
 #include "audio.hpp"
@@ -15,7 +16,7 @@ int main(int argc, char* argv[]) {
     const int screen_height = 600;
 
     InitWindow(screen_width, screen_height, "Bombswab");
-    SetTargetFPS(60);
+    SetTargetFPS(FRAMERATE);
 
     EnableCursor();
 
