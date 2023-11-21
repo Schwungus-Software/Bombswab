@@ -3,24 +3,11 @@
 
 #include "camera.hpp"
 #include "grid.hpp"
+#include "level.hpp"
 #include "particles.hpp"
 #include "spritesheet.tpp"
 #include "things.hpp"
 #include "utils.tpp"
-
-Grid grid;
-
-void draw_grid() {
-    for (std::size_t i = 0; i < GRID_SIZE; i++) {
-        const auto& tile = grid.tiles[i];
-
-        const auto x = static_cast<float>(i % GRID_WIDTH);
-        const auto y = static_cast<float>(i / GRID_HEIGHT);
-
-        const auto sprite = tile.is_closed() ? Tile::CLOSED : tile.kind;
-        draw<Tile>(sprite, {x, y});
-    }
-}
 
 bool GridTile::is_closed() const {
     switch (kind) {
@@ -140,16 +127,16 @@ void Grid::tick() {
                     break;
                 }
                 case Tile::MINE_HIT:
-                    spawn_particle(pos, Particle::EXPLOSION, 5);
+                    level.spawn_particle(pos, Particle::EXPLOSION, 5);
 
                     for (int xx = -1; xx <= 1; xx++) {
                         for (int yy = -1; yy <= 1; yy++) {
                             const Vector2 neighbor_pos{pos.x + xx, pos.y + yy};
                             open(neighbor_pos);
 
-                            spawn_particle(neighbor_pos, Particle::EXPLOSION, 20);
+                            level.spawn_particle(neighbor_pos, Particle::EXPLOSION, 20);
 
-                            for (const auto& thing : things) {
+                            for (const auto& thing : level.things) {
                                 if (thing->x == neighbor_pos.x && thing->y == neighbor_pos.y) {
                                     thing->damage(20);
                                 }

@@ -41,8 +41,4 @@ class Grid {
     bool is_active(Vector2);
 };
 
-extern Grid grid;
-
-void draw_grid();
-
 Vector2 mouse_to_grid();

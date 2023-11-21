@@ -1,7 +1,7 @@
 #include "actions.hpp"
+#include "level.hpp"
 #include "line.hpp"
 #include "spritesheet.tpp"
-#include "things.hpp"
 
 void Projectile::act() {
     if (--range == 0 || cur_point + 1 == trajectory.size()) {
@@ -13,7 +13,7 @@ void Projectile::act() {
 
         ongoing.reset(new Die);
     } else {
-        for (const auto& thing : things) {
+        for (const auto& thing : level.things) {
             if (collides_with(*thing)) {
                 thing->damage(damage);
 

@@ -84,12 +84,6 @@ class Thing {
     virtual ~Thing();
 };
 
-extern std::vector<std::unique_ptr<Thing>> things;
-extern std::vector<Thing*> spawn_queue;
-
-void tick_things();
-void draw_things();
-
 class Humanoid : public Thing {
   public:
     Color body_color;

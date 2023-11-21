@@ -1,6 +1,5 @@
 #include "actions.hpp"
-#include "grid.hpp"
-#include "things.hpp"
+#include "level.hpp"
 
 void Move::perform(Thing& actor) {
     switch (dir) {
@@ -21,7 +20,7 @@ void Move::perform(Thing& actor) {
     actor.walk_dir = dir;
     actor.action_dir = actor.walk_dir;
 
-    const auto& tile = grid.tile_at(actor.pos());
+    const auto& tile = level.grid.tile_at(actor.pos());
 
     if (tile.is_closed()) {
         if (!actor.ghost) {

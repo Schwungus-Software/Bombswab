@@ -2,10 +2,9 @@
 
 #include "actions.hpp"
 #include "camera.hpp"
-#include "grid.hpp"
 #include "items.hpp"
+#include "level.hpp"
 #include "spritesheet.tpp"
-#include "things.hpp"
 #include "utils.tpp"
 #include "weapons.hpp"
 
@@ -87,7 +86,7 @@ std::vector<Thing::Sprite> Humanoid::draw() {
 
 void Humanoid::step() {
     if (can_reveal_tiles) {
-        grid.open(pos());
+        level.grid.open(pos());
     }
 
     stepped = !stepped;
@@ -99,10 +98,10 @@ void Humanoid::step() {
 }
 
 void Humanoid::collide() {
-    const auto& tile = grid.tile_at(pos());
+    const auto& tile = level.grid.tile_at(pos());
 
     if (can_reveal_tiles) {
-        grid.open(pos());
+        level.grid.open(pos());
     }
 
     switch (walk_dir) {
@@ -134,7 +133,7 @@ void Humanoid::died() {
     corpse->max_health = max_health;
     corpse->cur_health = std::max(1, max_health / 2);
 
-    spawn_queue.push_back(corpse);
+    level.spawn_thing(corpse);
 }
 
 void Player::act() {

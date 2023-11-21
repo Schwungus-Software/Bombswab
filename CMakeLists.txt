@@ -27,6 +27,7 @@ set(SOURCES
     "src/line.cpp"
     "src/actions.cpp"
     "src/things.cpp"
+    "src/level.cpp"
     "src/item_slot.cpp"
     "src/items.cpp"
     "src/weapons.cpp"
@@ -54,6 +55,7 @@ set(HEADERS
     "src/weapons.hpp"
     "src/particles.hpp"
     "src/things.hpp"
+    "src/level.hpp"
     "src/spritesheets.hpp"
     "src/misc.hpp")
 

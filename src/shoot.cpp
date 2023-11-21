@@ -1,6 +1,6 @@
 #include "actions.hpp"
+#include "level.hpp"
 #include "line.hpp"
-#include "things.hpp"
 #include "weapons.hpp"
 
 void Shoot::perform(Thing& actor) {
@@ -51,6 +51,6 @@ void Shoot::perform(Thing& actor) {
         }
     }
 
-    spawn_queue.push_back(std::move(projectile));
+    level.spawn_thing(projectile);
     actor.play_sound_local(rifle_fire);
 }

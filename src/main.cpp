@@ -6,10 +6,9 @@
 #include "audio.hpp"
 #include "camera.hpp"
 #include "gamestate.hpp"
-#include "grid.hpp"
+#include "level.hpp"
 #include "particles.hpp"
 #include "spritesheet.tpp"
-#include "things.hpp"
 
 int main(int argc, char* argv[]) {
     const int screen_width = 800;
@@ -36,10 +35,7 @@ int main(int argc, char* argv[]) {
         BeginMode2D(get_camera());
         {
             ClearBackground({69, 42, 16, 255});
-
-            draw_grid();
-            draw_things();
-            draw_particles();
+            level.draw();
         }
         EndMode2D();
 

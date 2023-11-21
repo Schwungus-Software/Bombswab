@@ -1,11 +1,13 @@
-#include "gamestate.hpp"
+#include <variant>
+
 #include "camera.hpp"
+#include "gamestate.hpp"
 #include "grid.hpp"
+#include "level.hpp"
 #include "particles.hpp"
 #include "raylib.h"
 #include "spritesheet.tpp"
 #include "things.hpp"
-#include <variant>
 
 GSM gsm(new PickLocation);
 
@@ -41,7 +43,7 @@ static void init_level() {
     auto player = std::make_unique<Player>(pos.x, pos.y);
     player->max_health = 100;
     player->cur_health = player->max_health;
-    things.push_back(std::move(player));
+    level.things.push_back(std::move(player));
 
     for (int enemy_count = 20; enemy_count > 0; enemy_count--) {
         const auto x = GetRandomValue(0, GRID_WIDTH - 1);
@@ -50,24 +52,24 @@ static void init_level() {
         auto enemy = std::make_unique<Enemy>(x, y);
         enemy->max_health = 20;
         enemy->cur_health = enemy->max_health;
-        things.push_back(std::move(enemy));
+        level.things.push_back(std::move(enemy));
     }
 
     do {
-        grid.generate();
-    } while (grid.tile_at(pos).kind != Tile::CLOSED);
+        level.grid.generate();
+    } while (level.grid.tile_at(pos).kind != Tile::CLOSED);
 
-    grid.open(pos);
+    level.grid.open(pos);
 }
 
 PickLocation::PickLocation() {
-    things.clear();
+    level.things.clear();
 
     grid_pos.x = GRID_WIDTH * SPRITE_DIM / 2.0;
     grid_pos.y = GRID_HEIGHT * SPRITE_DIM / 2.0;
 
     for (std::size_t i = 0; i < GRID_SIZE; i++) {
-        auto& tile = grid.tiles[i];
+        auto& tile = level.grid.tiles[i];
         tile.kind = Tile::CLOSED;
         tile.turns_till_active = 0;
     }
@@ -113,10 +115,9 @@ void PickLocation::overlay() {
 }
 
 GSM::Transition Play::tick() {
-    tick_particles();
-    tick_things();
+    level.tick();
 
-    for (const auto& thing : things) {
+    for (const auto& thing : level.things) {
         if (dynamic_cast<Player*>(thing.get()) != nullptr) {
             return GSM::Ignore();
         }
@@ -130,8 +131,7 @@ MissionFailed::MissionFailed() {
 }
 
 GSM::Transition MissionFailed::tick() {
-    tick_particles();
-    tick_things();
+    level.tick();
 
     delay--;
 
