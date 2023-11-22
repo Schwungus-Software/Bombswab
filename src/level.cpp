@@ -42,13 +42,19 @@ void Level::draw() {
         const auto& tile = grid.tiles[i];
 
         const auto x = static_cast<float>(i % GRID_WIDTH);
-        const auto y = static_cast<float>(i / GRID_HEIGHT);
+
+        const auto y_div = i / GRID_HEIGHT; // separate variable to silence a warning
+        const auto y = static_cast<float>(y_div);
 
         const auto sprite = tile.is_closed() ? Tile::CLOSED : tile.kind;
         ::draw<Tile>(sprite, {x, y});
     }
 
     for (const auto& thing : things) {
+        if (thing->deletion_mark) {
+            continue;
+        }
+
         const auto& tile_at = grid.tile_at(thing->pos());
 
         if (tile_at.is_closed()) {

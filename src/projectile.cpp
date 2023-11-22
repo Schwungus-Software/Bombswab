@@ -5,7 +5,7 @@
 
 void Projectile::act() {
     if (--range == 0 || cur_point + 1 == trajectory.size()) {
-        const auto collision = collide_at(true);
+        const auto collision = intersect_at(true);
 
         if (collision != nullptr) {
             collision->damage(damage);

@@ -11,15 +11,15 @@
 Humanoid::Humanoid(int x, int y, Color body_color, bool can_reveal_tiles)
     : Thing(x, y), body_color(body_color), can_reveal_tiles(can_reveal_tiles) {
     const auto rifle = new Rifle;
-    rifle->clip_slot.contents.reset(new BulletClip(50));
-    lh_slot.contents.reset(rifle);
+    rifle->clip_slot.insert(new BulletClip(50));
+    lh_slot.insert(rifle);
 
     const auto pistol = new Pistol;
-    pistol->clip_slot.contents.reset(new BulletClip(10));
-    rh_slot.contents.reset(pistol);
+    pistol->clip_slot.insert(new BulletClip(10));
+    rh_slot.insert(pistol);
 
     const auto clip = new BulletClip(100);
-    pockets[3].contents.reset(clip);
+    pockets[3].insert(clip);
 }
 
 std::vector<Thing::Sprite> Humanoid::draw() {
@@ -28,22 +28,24 @@ std::vector<Thing::Sprite> Humanoid::draw() {
     const auto push_guy = [this, &layers]() { layers.push_back({ThingSprite::MAN, body_color}); };
 
     const auto vertical = [this, &layers](const ItemSlot& slot, const bool left) {
-        if (slot.contents != nullptr) {
-            for (auto sprite : slot.contents->draw()) {
-                sprite.flip = left ? ::flip(action_dir_to_flip()) : action_dir_to_flip();
-                sprite.offset += 6.0 / SPRITE_DIM;
-                sprite.cross += 4.0 / SPRITE_DIM;
-                layers.push_back(sprite);
-            }
+        if (slot.empty()) {
+            return;
+        }
+
+        for (auto sprite : slot.peek()->draw()) {
+            sprite.flip = left ? ::flip(action_dir_to_flip()) : action_dir_to_flip();
+            sprite.offset += 6.0 / SPRITE_DIM;
+            sprite.cross += 4.0 / SPRITE_DIM;
+            layers.push_back(sprite);
         }
     };
 
     const auto horizontal = [this, &layers](const ItemSlot& slot, const bool back) {
-        if (slot.contents == nullptr) {
+        if (slot.empty()) {
             return;
         }
 
-        for (auto sprite : slot.contents->draw()) {
+        for (auto sprite : slot.peek()->draw()) {
             sprite.flip = action_dir_to_flip();
 
             if (back) {
@@ -146,16 +148,34 @@ void Player::act() {
         {KEY_TWO, &pockets[1]}, {KEY_THREE, &pockets[2]}, {KEY_FOUR, &pockets[3]},
     };
 
-    if (last_selected != nullptr) {
-        if (IsKeyPressed(KEY_SPACE)) {
-            const auto action = last_selected->contents->activate(*this);
+    if (IsKeyPressed(KEY_SPACE)) {
+        if (last_selected == nullptr) { // select whatever's on the ground
+            for (const auto& thing : level.things) {
+                const auto drop = dynamic_cast<ItemDrop*>(thing.get());
+
+                if (drop != nullptr) {
+                    last_selected = &drop->internal_slot;
+                    break;
+                }
+            }
+        } else if (!last_selected->empty()) { // activate
+            const auto action = last_selected->peek()->activate(*this);
 
             if (action != nullptr) {
                 ongoing.reset(action);
             }
 
             return;
+        } else { // deselect since it's empty anyways
+            last_selected = nullptr;
+            return;
         }
+    }
+
+    if (IsKeyPressed(KEY_G) && last_selected != nullptr && !last_selected->empty()) {
+        // TODO: drop on the ground.
+        last_selected->trash();
+        return;
     }
 
     for (const auto& pair : item_slots) {
@@ -169,20 +189,20 @@ void Player::act() {
             last_selected = slot;
             return;
         } else {
-            if (last_selected->contents != nullptr && slot->contents != nullptr) {
-                const auto action = slot->contents->insert(*this, *last_selected);
+            if (last_selected->peek() != nullptr && slot->peek() != nullptr) {
+                const auto action = slot->peek()->insert(*this, *last_selected);
 
                 if (action != nullptr) {
                     ongoing.reset(action);
                 }
 
                 last_selected = nullptr;
-                return;
-            } else if (last_selected->contents != nullptr && slot->contents == nullptr) {
-                const auto tmp = last_selected->contents.release();
-                slot->contents.reset(tmp);
 
+                return;
+            } else if (last_selected->peek() != nullptr && slot->peek() == nullptr) {
+                slot->insert(last_selected->take());
                 last_selected = nullptr;
+
                 return;
             }
         }
@@ -195,7 +215,7 @@ void Player::act() {
 
     for (const auto& pair : weapon_slots) {
         const auto& slot = hand_slot(pair.second);
-        const auto item = slot.contents.get();
+        const auto item = slot.peek();
 
         if (item == nullptr) {
             continue;
@@ -249,8 +269,8 @@ std::vector<Thing::Sprite> Player::draw() {
             cell.cross = 1.0;
             layers.push_back(cell);
 
-            if (slot.contents != nullptr) {
-                for (auto sprite : slot.contents->draw()) {
+            if (!slot.empty()) {
+                for (auto sprite : slot.peek()->draw()) {
                     sprite.offset += i;
                     sprite.cross = 1.0;
                     layers.push_back(sprite);

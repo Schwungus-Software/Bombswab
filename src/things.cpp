@@ -84,7 +84,7 @@ bool Thing::collides_with(const Thing& another, bool ghost_bypass) {
     return false;
 }
 
-Thing* Thing::collide_at(bool ghost_bypass) {
+Thing* Thing::intersect_at(bool ghost_bypass) {
     for (const auto& thing : level.things) {
         if (collides_with(*thing, ghost_bypass)) {
             return thing.get();
@@ -115,3 +115,17 @@ Vector2 Thing::pos() {
 }
 
 Thing::~Thing() = default;
+
+void ItemDrop::think() {
+    if (internal_slot.empty()) {
+        deletion_mark = true;
+    }
+}
+
+std::vector<Thing::Sprite> ItemDrop::draw() {
+    return internal_slot.peek()->draw();
+}
+
+std::vector<Thing::Sprite> Corpse::draw() {
+    return {ThingSprite::CORPSE};
+}

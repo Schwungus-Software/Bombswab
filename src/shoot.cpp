@@ -4,7 +4,7 @@
 #include "weapons.hpp"
 
 void Shoot::perform(Thing& actor) {
-    const auto& weapon_item = actor.hand_slot(slot).contents.get();
+    const auto& weapon_item = actor.hand_slot(slot).peek();
 
     if (weapon_item == nullptr) {
         return;

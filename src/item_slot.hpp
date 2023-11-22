@@ -1,22 +1,54 @@
 #pragma once
 
+#include <exception>
 #include <memory>
 
 class Item;
 
+class TakeFailed : public std::exception {};
+
+class TakeFromEmptySlot : public TakeFailed {};
+class TakeInvalidCast : public TakeFailed {};
+
 struct ItemSlot {
-    std::unique_ptr<Item> contents;
+  private:
+    std::unique_ptr<Item> contents = nullptr;
+
+  public:
+    ItemSlot() = default;
+    ItemSlot(Item* contents) : contents(contents) {}
 
     void tick();
 
+    std::unique_ptr<Item> insert(Item*);
+
     template <typename T>
     T* take_as() {
-        const auto cast = dynamic_cast<T*>(contents.get());
+        if (empty()) {
+            throw TakeFromEmptySlot();
+        }
+
+        const auto cast = dynamic_cast<T*>(peek());
 
         if (cast == nullptr) {
-            return nullptr;
+            throw TakeInvalidCast();
         } else {
-            return dynamic_cast<T*>(contents.release());
+            const auto ptr = contents.release();
+            return dynamic_cast<T*>(ptr);
         }
     }
+
+    void trash();
+
+    Item* take();
+
+    bool empty() const {
+        return peek() == nullptr;
+    }
+
+    Item* peek() const {
+        return contents.get();
+    }
+
+    ~ItemSlot();
 };

@@ -28,7 +28,6 @@ class Thing {
 
     ItemSlot lh_slot, rh_slot;
     std::array<ItemSlot, POCKET_COUNT> pockets;
-
     ItemSlot* last_selected;
 
     // Health.
@@ -67,7 +66,7 @@ class Thing {
     bool damage(int);
 
     bool collides_with(const Thing&, bool = false);
-    Thing* collide_at(bool = false);
+    Thing* intersect_at(bool = false);
 
     void play_sound(const Sound&);
     void play_sound_local(const Sound&);
@@ -130,6 +129,19 @@ class Corpse : public Thing {
     std::vector<Sprite> draw() override;
 
     // TODO: override `before_death` to add blood splatters.
+};
+
+class ItemDrop : public Thing {
+  public:
+    ItemSlot internal_slot;
+
+    ItemDrop(int x, int y, Item* contents) : Thing(x, y), internal_slot(contents) {
+        cur_health = max_health = 100;
+    }
+
+    void think() override;
+
+    std::vector<Sprite> draw() override;
 };
 
 class Projectile : public Thing {

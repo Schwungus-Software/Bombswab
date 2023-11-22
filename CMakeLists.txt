@@ -37,7 +37,6 @@ set(SOURCES
     "src/shoot.cpp"
     "src/humanoid.cpp"
     "src/projectile.cpp"
-    "src/corpse.cpp"
     "src/misc.cpp"
     "src/main.cpp")
 

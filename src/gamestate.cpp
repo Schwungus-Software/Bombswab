@@ -8,6 +8,7 @@
 #include "raylib.h"
 #include "spritesheet.tpp"
 #include "things.hpp"
+#include "weapons.hpp"
 
 GSM gsm(new PickLocation);
 
@@ -37,6 +38,7 @@ void GSM::overlay() {
     stack.back()->overlay();
 }
 
+// TODO: move to level.cpp or something.
 static void init_level() {
     const auto pos = mouse_to_grid();
 
@@ -45,14 +47,22 @@ static void init_level() {
     player->cur_health = player->max_health;
     level.things.push_back(std::move(player));
 
-    for (int enemy_count = 20; enemy_count > 0; enemy_count--) {
+    for (std::size_t enemy_count = 20; enemy_count > 0; enemy_count--) {
         const auto x = GetRandomValue(0, GRID_WIDTH - 1);
         const auto y = GetRandomValue(0, GRID_HEIGHT - 1);
 
-        auto enemy = std::make_unique<Enemy>(x, y);
+        auto enemy = new Enemy(x, y);
         enemy->max_health = 20;
         enemy->cur_health = enemy->max_health;
-        level.things.push_back(std::move(enemy));
+        level.spawn_thing(enemy);
+    }
+
+    for (std::size_t drops_count = 15; drops_count > 0; drops_count--) {
+        const auto x = GetRandomValue(0, GRID_WIDTH - 1);
+        const auto y = GetRandomValue(0, GRID_HEIGHT - 1);
+
+        auto drop = new ItemDrop(x, y, new Pistol);
+        level.spawn_thing(drop);
     }
 
     do {

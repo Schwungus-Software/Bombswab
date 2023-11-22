@@ -1,7 +1,8 @@
 #include "weapons.hpp"
+#include "item_slot.hpp"
 
 BulletClip* BulletWeapon::clip() {
-    const auto contents = clip_slot.contents.get();
+    const auto contents = clip_slot.peek();
 
     if (contents == nullptr) {
         return nullptr;
@@ -27,19 +28,14 @@ Projectile* BulletWeapon::shoot(Vector2 destination) {
 }
 
 Action* BulletWeapon::insert(Thing& actor, ItemSlot& source) {
-    const auto clip = source.take_as<BulletClip>();
+    try {
+        const auto clip = source.take_as<BulletClip>();
 
-    if (clip == nullptr) {
+        clip_slot.trash();
+        clip_slot.insert(clip);
+
+        return new Noop;
+    } catch (const TakeFailed&) {
         return nullptr;
     }
-
-    if (clip_slot.contents != nullptr) {
-        const auto old = clip_slot.contents.release();
-        // TODO: drop `old` on the ground.
-        delete old;
-    }
-
-    clip_slot.contents.reset(clip);
-
-    return new Noop;
 }
