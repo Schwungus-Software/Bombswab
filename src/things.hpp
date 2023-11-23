@@ -26,9 +26,9 @@ class Thing {
 
     std::unique_ptr<Action> ongoing;
 
-    ItemSlot lh_slot, rh_slot;
-    std::array<ItemSlot, POCKET_COUNT> pockets;
-    ItemSlot* last_selected;
+    ID<ItemSlot> lh_slot, rh_slot;
+    std::array<ID<ItemSlot>, POCKET_COUNT> pockets;
+    ID<ItemSlot> last_selected;
 
     // Health.
 
@@ -71,7 +71,7 @@ class Thing {
     void play_sound(const Sound&);
     void play_sound_local(const Sound&);
 
-    ItemSlot& hand_slot(HandSlot);
+    ID<ItemSlot> hand_slot(HandSlot);
 
     Vector2 pos();
 
@@ -133,10 +133,11 @@ class Corpse : public Thing {
 
 class ItemDrop : public Thing {
   public:
-    ItemSlot internal_slot;
+    ID<ItemSlot> internal_slot;
 
     ItemDrop(int x, int y, Item* contents) : Thing(x, y), internal_slot(contents) {
         cur_health = max_health = 100;
+        ghost = true;
     }
 
     void think() override;

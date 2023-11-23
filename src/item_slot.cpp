@@ -24,15 +24,3 @@ void ItemSlot::trash() {
 Item* ItemSlot::take() {
     return take_as<Item>();
 }
-
-ItemSlot::~ItemSlot() {
-    for (auto& thing : level.things) {
-        if (thing == nullptr) {
-            continue;
-        }
-
-        if (thing->last_selected == this) {
-            thing->last_selected = nullptr;
-        }
-    }
-}

@@ -2,7 +2,7 @@
 #include "item_slot.hpp"
 
 BulletClip* BulletWeapon::clip() {
-    const auto contents = clip_slot.peek();
+    const auto contents = clip_slot->peek();
 
     if (contents == nullptr) {
         return nullptr;
@@ -27,12 +27,12 @@ Projectile* BulletWeapon::shoot(Vector2 destination) {
     return new Bullet(destination.x, destination.y, range, damage);
 }
 
-Action* BulletWeapon::insert(Thing& actor, ItemSlot& source) {
+Action* BulletWeapon::insert(Thing& actor, ID<ItemSlot> source) {
     try {
-        const auto clip = source.take_as<BulletClip>();
+        const auto clip = source->take_as<BulletClip>();
 
-        clip_slot.trash();
-        clip_slot.insert(clip);
+        clip_slot->trash();
+        clip_slot->insert(clip);
 
         return new Noop;
     } catch (const TakeFailed&) {

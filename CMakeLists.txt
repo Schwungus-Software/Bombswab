@@ -40,7 +40,7 @@ set(SOURCES
     "src/misc.cpp"
     "src/main.cpp")
 
-set(TEMPLATES "src/utils.tpp" "src/spritesheet.tpp")
+set(TEMPLATES "src/utils.tpp" "src/id.tpp" "src/spritesheet.tpp")
 
 set(HEADERS
     "src/grid.hpp"

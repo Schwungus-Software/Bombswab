@@ -3,6 +3,8 @@
 #include <exception>
 #include <memory>
 
+#include "id.tpp"
+
 class Item;
 
 class TakeFailed : public std::exception {};
@@ -17,6 +19,7 @@ struct ItemSlot {
   public:
     ItemSlot() = default;
     ItemSlot(Item* contents) : contents(contents) {}
+    ~ItemSlot() = default;
 
     void tick();
 
@@ -49,6 +52,4 @@ struct ItemSlot {
     Item* peek() const {
         return contents.get();
     }
-
-    ~ItemSlot();
 };

@@ -11,15 +11,15 @@
 Humanoid::Humanoid(int x, int y, Color body_color, bool can_reveal_tiles)
     : Thing(x, y), body_color(body_color), can_reveal_tiles(can_reveal_tiles) {
     const auto rifle = new Rifle;
-    rifle->clip_slot.insert(new BulletClip(50));
-    lh_slot.insert(rifle);
+    rifle->clip_slot->insert(new BulletClip(50));
+    lh_slot->insert(rifle);
 
     const auto pistol = new Pistol;
-    pistol->clip_slot.insert(new BulletClip(10));
-    rh_slot.insert(pistol);
+    pistol->clip_slot->insert(new BulletClip(10));
+    rh_slot->insert(pistol);
 
     const auto clip = new BulletClip(100);
-    pockets[3].insert(clip);
+    pockets[3]->insert(clip);
 }
 
 std::vector<Thing::Sprite> Humanoid::draw() {
@@ -27,12 +27,12 @@ std::vector<Thing::Sprite> Humanoid::draw() {
 
     const auto push_guy = [this, &layers]() { layers.push_back({ThingSprite::MAN, body_color}); };
 
-    const auto vertical = [this, &layers](const ItemSlot& slot, const bool left) {
-        if (slot.empty()) {
+    const auto vertical = [this, &layers](ID<ItemSlot> slot, const bool left) {
+        if (slot->empty()) {
             return;
         }
 
-        for (auto sprite : slot.peek()->draw()) {
+        for (auto sprite : slot->peek()->draw()) {
             sprite.flip = left ? ::flip(action_dir_to_flip()) : action_dir_to_flip();
             sprite.offset += 6.0 / SPRITE_DIM;
             sprite.cross += 4.0 / SPRITE_DIM;
@@ -40,12 +40,12 @@ std::vector<Thing::Sprite> Humanoid::draw() {
         }
     };
 
-    const auto horizontal = [this, &layers](const ItemSlot& slot, const bool back) {
-        if (slot.empty()) {
+    const auto horizontal = [this, &layers](const ID<ItemSlot> slot, const bool back) {
+        if (slot->empty()) {
             return;
         }
 
-        for (auto sprite : slot.peek()->draw()) {
+        for (auto sprite : slot->peek()->draw()) {
             sprite.flip = action_dir_to_flip();
 
             if (back) {
@@ -143,18 +143,18 @@ void Player::act() {
     camera_center.x *= SPRITE_DIM;
     camera_center.y *= SPRITE_DIM;
 
-    const std::vector<std::pair<KeyboardKey, ItemSlot*>> item_slots{
-        {KEY_Q, &lh_slot},      {KEY_E, &rh_slot},        {KEY_ONE, &pockets[0]},
-        {KEY_TWO, &pockets[1]}, {KEY_THREE, &pockets[2]}, {KEY_FOUR, &pockets[3]},
+    const std::vector<std::pair<KeyboardKey, ID<ItemSlot>>> item_slots{
+        {KEY_Q, lh_slot},      {KEY_E, rh_slot},        {KEY_ONE, pockets[0]},
+        {KEY_TWO, pockets[1]}, {KEY_THREE, pockets[2]}, {KEY_FOUR, pockets[3]},
     };
 
     if (IsKeyPressed(KEY_SPACE)) {
-        if (last_selected == nullptr) { // select whatever's on the ground
+        if (!last_selected.valid()) { // select whatever's on the ground
             for (const auto& thing : level.things) {
                 const auto drop = dynamic_cast<ItemDrop*>(thing.get());
 
                 if (drop != nullptr) {
-                    last_selected = &drop->internal_slot;
+                    last_selected = drop->internal_slot;
                     break;
                 }
             }
@@ -167,12 +167,12 @@ void Player::act() {
 
             return;
         } else { // deselect since it's empty anyways
-            last_selected = nullptr;
+            last_selected.invalidate();
             return;
         }
     }
 
-    if (IsKeyPressed(KEY_G) && last_selected != nullptr && !last_selected->empty()) {
+    if (IsKeyPressed(KEY_G) && last_selected.valid() && !last_selected->empty()) {
         // TODO: drop on the ground.
         last_selected->trash();
         return;
@@ -183,28 +183,28 @@ void Player::act() {
             continue;
         }
 
-        const auto slot = pair.second;
+        auto slot = pair.second;
 
-        if (last_selected == nullptr) {
-            last_selected = slot;
-            return;
-        } else {
+        if (last_selected.valid()) {
             if (last_selected->peek() != nullptr && slot->peek() != nullptr) {
-                const auto action = slot->peek()->insert(*this, *last_selected);
+                const auto action = slot->peek()->insert(*this, last_selected);
 
                 if (action != nullptr) {
                     ongoing.reset(action);
                 }
 
-                last_selected = nullptr;
+                last_selected.invalidate();
 
                 return;
             } else if (last_selected->peek() != nullptr && slot->peek() == nullptr) {
                 slot->insert(last_selected->take());
-                last_selected = nullptr;
+                last_selected.invalidate();
 
                 return;
             }
+        } else {
+            last_selected = slot;
+            return;
         }
     }
 
@@ -215,7 +215,7 @@ void Player::act() {
 
     for (const auto& pair : weapon_slots) {
         const auto& slot = hand_slot(pair.second);
-        const auto item = slot.peek();
+        const auto item = slot->peek();
 
         if (item == nullptr) {
             continue;
@@ -234,7 +234,7 @@ void Player::act() {
         if (IsMouseButtonDown(pair.first)) {
             const auto dest = mouse_to_grid();
             ongoing.reset(new Shoot(dest, pair.second));
-            last_selected = nullptr;
+            last_selected.invalidate();
             return;
         }
     }
@@ -253,13 +253,13 @@ void Player::act() {
         return;
     }
 
-    last_selected = nullptr;
+    last_selected.invalidate();
 }
 
 std::vector<Thing::Sprite> Player::draw() {
     auto layers = Humanoid::draw();
 
-    if (last_selected != nullptr) {
+    if (last_selected.valid()) {
         float i = (pockets.size() * -0.5) + 0.5;
 
         for (const auto& slot : pockets) {
@@ -269,8 +269,8 @@ std::vector<Thing::Sprite> Player::draw() {
             cell.cross = 1.0;
             layers.push_back(cell);
 
-            if (!slot.empty()) {
-                for (auto sprite : slot.peek()->draw()) {
+            if (!slot->empty()) {
+                for (auto sprite : slot->peek()->draw()) {
                     sprite.offset += i;
                     sprite.cross = 1.0;
                     layers.push_back(sprite);

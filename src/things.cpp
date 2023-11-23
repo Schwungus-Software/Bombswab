@@ -6,14 +6,16 @@
 
 Thing::Thing(int x, int y)
     : x(x), y(y), ongoing(new Noop), max_health(1), cur_health(1), ghost(false), deletion_mark(false), stepped(false),
-      walk_dir(Direction::RIGHT), action_dir(Direction::RIGHT), last_selected(nullptr) {}
+      walk_dir(Direction::RIGHT), action_dir(Direction::RIGHT) {
+    last_selected.invalidate();
+}
 
 void Thing::tick() {
-    lh_slot.tick();
-    rh_slot.tick();
+    lh_slot->tick();
+    rh_slot->tick();
 
     for (auto& slot : pockets) {
-        slot.tick();
+        slot->tick();
     }
 
     think();
@@ -102,7 +104,7 @@ void Thing::play_sound_local(const Sound& snd) {
     play_sound_at(snd, pos());
 }
 
-ItemSlot& Thing::hand_slot(HandSlot hand_slot) {
+ID<ItemSlot> Thing::hand_slot(HandSlot hand_slot) {
     if (hand_slot == HandSlot::LEFT) {
         return lh_slot;
     } else {
@@ -117,13 +119,15 @@ Vector2 Thing::pos() {
 Thing::~Thing() = default;
 
 void ItemDrop::think() {
-    if (internal_slot.empty()) {
+    if (internal_slot->empty()) {
         deletion_mark = true;
+    } else {
+        internal_slot->tick();
     }
 }
 
 std::vector<Thing::Sprite> ItemDrop::draw() {
-    return internal_slot.peek()->draw();
+    return internal_slot->peek()->draw();
 }
 
 std::vector<Thing::Sprite> Corpse::draw() {

@@ -25,7 +25,7 @@ class AbstractWeapon : public Item {
 class BulletWeapon : public AbstractWeapon {
   public:
     const int range, damage;
-    ItemSlot clip_slot;
+    ID<ItemSlot> clip_slot;
 
     BulletWeapon(int range, int damage, int shoot_cooldown)
         : AbstractWeapon(shoot_cooldown), range(range), damage(damage) {}
@@ -34,7 +34,7 @@ class BulletWeapon : public AbstractWeapon {
 
     BulletClip* clip();
 
-    Action* insert(Thing& actor, ItemSlot& source) override;
+    Action* insert(Thing& actor, ID<ItemSlot> source) override;
 };
 
 class Rifle : public BulletWeapon {

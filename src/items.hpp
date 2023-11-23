@@ -22,7 +22,7 @@ class Item {
         return nullptr;
     }
 
-    virtual Action* insert(Thing& actor, ItemSlot& source) {
+    virtual Action* insert(Thing& actor, ID<ItemSlot> source) {
         return nullptr;
     }
 
