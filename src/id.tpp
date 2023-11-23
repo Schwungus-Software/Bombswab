@@ -17,7 +17,7 @@ class ID {
     std::variant<std::shared_ptr<T>, std::weak_ptr<T>> data;
 
   public:
-    ID<T>(T*&& owned) : owner_of_data(true) {
+    ID<T>(T* owned) : owner_of_data(true) {
         data = std::shared_ptr<T>(owned);
     }
 
