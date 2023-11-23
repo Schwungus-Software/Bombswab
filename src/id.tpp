@@ -17,20 +17,21 @@ class ID {
     std::variant<std::shared_ptr<T>, std::weak_ptr<T>> data;
 
   public:
-    ID() : ID(new T) {}
-
-    ID(T* owned) : owner_of_data(true) {
+    ID<T>(T*&& owned) : owner_of_data(true) {
         data = std::shared_ptr<T>(owned);
     }
 
+    ID<T>() : ID<T>(new T) {}
+
     template <typename... Args>
-    ID(Args&&... constructor_args) : ID(new T(constructor_args...)) {}
+    ID<T>(Args&&... constructor_args) : ID<T>(new T(std::forward<Args>(constructor_args)...)) {}
 
     ID<T>(ID<T>& another) : ID<T>(const_cast<const ID<T>&>(another)) {}
 
     ID<T>(const ID<T>& another) : owner_of_data(false) {
         if (another.owner_of_data) {
-            data = std::weak_ptr<T>(STRONG(another.data));
+            std::weak_ptr<T> weak = STRONG(another.data);
+            data = weak;
         } else {
             data = another.data;
         }
@@ -79,3 +80,6 @@ class ID {
 
     ~ID() = default;
 };
+
+#undef STRONG
+#undef WEAK

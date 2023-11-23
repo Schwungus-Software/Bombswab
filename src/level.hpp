@@ -17,7 +17,7 @@ extern struct Level {
     Level() = default;
     ~Level();
 
-    void spawn_thing(Thing*);
+    void spawn_thing(Thing*&&);
     void spawn_particle(Vector2, Particle, int);
 
     void tick();

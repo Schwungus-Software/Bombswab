@@ -11,7 +11,7 @@ Level::~Level() {
     spawn_queue.clear();
 }
 
-void Level::spawn_thing(Thing* thing) {
+void Level::spawn_thing(Thing*&& thing) {
     spawn_queue.push_back(thing);
 }
 

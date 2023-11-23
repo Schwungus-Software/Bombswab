@@ -153,7 +153,11 @@ void Player::act() {
             for (const auto& thing : level.things) {
                 const auto drop = dynamic_cast<ItemDrop*>(thing.get());
 
-                if (drop != nullptr) {
+                if (drop == nullptr) {
+                    continue;
+                }
+
+                if (collides_with(*drop, true)) {
                     last_selected = drop->internal_slot;
                     break;
                 }
@@ -175,6 +179,7 @@ void Player::act() {
     if (IsKeyPressed(KEY_G) && last_selected.valid() && !last_selected->empty()) {
         // TODO: drop on the ground.
         last_selected->trash();
+        last_selected.invalidate();
         return;
     }
 
