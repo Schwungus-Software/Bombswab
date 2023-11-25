@@ -24,7 +24,7 @@ void GSM::tick() {
         stack.pop_back();
 
         if (stack.empty()) {
-            throw Exit("No more game states to process", true);
+            throw Exit{"No more game states to process", true};
         }
     } else if (std::holds_alternative<Replace>(trans)) {
         const auto replace = std::get<Replace>(trans);
@@ -106,7 +106,7 @@ GSM::Transition PickLocation::tick() {
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
         init_level();
-        return GSM::Replace(new Play);
+        return GSM::Replace{new Play};
     }
 
     return GSM::Ignore();
@@ -133,7 +133,7 @@ GSM::Transition Play::tick() {
         }
     }
 
-    return GSM::Replace(new MissionFailed);
+    return GSM::Replace{new MissionFailed};
 }
 
 MissionFailed::MissionFailed() {
@@ -146,7 +146,7 @@ GSM::Transition MissionFailed::tick() {
     delay--;
 
     if (delay == 0) {
-        return GSM::Replace(new PickLocation);
+        return GSM::Replace{new PickLocation};
     } else {
         return GSM::Ignore();
     }
