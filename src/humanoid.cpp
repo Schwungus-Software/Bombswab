@@ -10,7 +10,7 @@
 
 Humanoid::Humanoid(int x, int y, Color body_color, bool can_reveal_tiles)
     : Thing(x, y), body_color(body_color), can_reveal_tiles(can_reveal_tiles) {
-    const auto rifle = new Rifle;
+    const auto rifle = new AssaultRifle;
     rifle->clip_slot->insert(new BulletClip(50));
     lh_slot->insert(rifle);
 
@@ -32,7 +32,7 @@ std::vector<Thing::Sprite> Humanoid::draw() {
             return;
         }
 
-        for (auto sprite : slot->peek()->draw()) {
+        for (auto sprite : slot->peek()->sprite) {
             sprite.flip = left ? ::flip(action_dir_to_flip()) : action_dir_to_flip();
             sprite.offset += 6.0 / SPRITE_DIM;
             sprite.cross += 4.0 / SPRITE_DIM;
@@ -45,7 +45,7 @@ std::vector<Thing::Sprite> Humanoid::draw() {
             return;
         }
 
-        for (auto sprite : slot->peek()->draw()) {
+        for (auto sprite : slot->peek()->sprite) {
             sprite.flip = action_dir_to_flip();
 
             if (back) {
@@ -275,7 +275,7 @@ std::vector<Thing::Sprite> Player::draw() {
             layers.push_back(cell);
 
             if (!slot->empty()) {
-                for (auto sprite : slot->peek()->draw()) {
+                for (auto sprite : slot->peek()->sprite) {
                     sprite.offset += i;
                     sprite.cross = 1.0;
                     layers.push_back(sprite);

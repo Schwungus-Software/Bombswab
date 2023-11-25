@@ -127,7 +127,7 @@ void ItemDrop::think() {
 }
 
 std::vector<Thing::Sprite> ItemDrop::draw() {
-    return internal_slot->peek()->draw();
+    return internal_slot->peek()->sprite;
 }
 
 std::vector<Thing::Sprite> Corpse::draw() {
