@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.20 FATAL_ERROR)
 
-add_subdirectory(external/raylib)
-
 project(Bombswab CXX)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  raylib
+  GIT_REPOSITORY git@github.com:raysan5/raylib.git
+  GIT_TAG 5.0)
+
+FetchContent_MakeAvailable(raylib)
 
 set(PROJECT_TARGET ${PROJECT_NAME})
 set(CMAKE_CXX_STANDARD 20)
