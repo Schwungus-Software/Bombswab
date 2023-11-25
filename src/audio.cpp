@@ -40,11 +40,13 @@ void play_sound_global(const Sound& snd) {
 }
 
 void play_sound_at(const Sound& snd, Vector2 pos) {
+    const float quiet_dist = 13.0; // can't hear jackshit from further
+    const float loud_dist = 3.0;   // max volume achieved here
+    const float shrink = 0.4;      // magic parameter for panning
+
     const auto listener = Vector2Scale(camera_center, 1.0 / SPRITE_DIM); // TODO: desync listener and camera_center
     const float init_dist = Vector2Distance(listener, pos);
 
-    const float quiet_dist = 8.0; // can't hear jackshit from further
-    const float loud_dist = 1.0;  // max volume achieved here
     const float range = quiet_dist - loud_dist;
 
     const float x = Clamp(init_dist - loud_dist, 0.0f, range);
@@ -54,7 +56,6 @@ void play_sound_at(const Sound& snd, Vector2 pos) {
     const float x_dir = std::cos(source_angle);
 
     const float base_pan = init_dist < 0.5 ? 0.5 : 0.5 - x_dir / 2.0;
-    const float shrink = 0.4;
     const float pan = 0.5 + shrink * (base_pan - 0.5);
 
     const Sound copy = snd;
