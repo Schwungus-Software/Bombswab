@@ -12,7 +12,9 @@ class Item {
   public:
     using Sprite = TintedSprite<ThingSprite>;
 
-    virtual std::string name() = 0;
+    std::string name;
+
+    Item(const std::string& name) : name(name) {}
 
     virtual std::vector<Sprite> draw() = 0;
 
@@ -29,24 +31,11 @@ class Item {
     virtual ~Item();
 };
 
-class SimpleItem : public Item {
-  public:
-    std::string static_name;
-
-  protected:
-    SimpleItem(std::string name) : static_name(name) {}
-
-  public:
-    std::string name() override {
-        return static_name;
-    }
-};
-
-class BulletClip : public SimpleItem {
+class BulletClip : public Item {
   public:
     std::size_t ammo_count;
 
-    BulletClip(std::size_t ammo_count) : SimpleItem("Clip"), ammo_count(ammo_count) {}
+    BulletClip(std::size_t ammo_count) : Item("Clip"), ammo_count(ammo_count) {}
 
     std::vector<Sprite> draw() override {
         return {ThingSprite::BULLET};
