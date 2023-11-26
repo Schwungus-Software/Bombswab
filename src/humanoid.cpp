@@ -1,9 +1,12 @@
 #include <utility>
+#include <variant>
 
 #include "actions.hpp"
 #include "camera.hpp"
 #include "items.hpp"
+#include "keybinds.hpp"
 #include "level.hpp"
+#include "raylib.h"
 #include "spritesheet.tpp"
 #include "utils.tpp"
 #include "weapons.hpp"
@@ -143,122 +146,16 @@ void Player::act() {
     camera_center.x *= SPRITE_DIM;
     camera_center.y *= SPRITE_DIM;
 
-    const std::vector<std::pair<KeyboardKey, ID<ItemSlot>>> item_slots{
-        {KEY_Q, lh_slot},      {KEY_E, rh_slot},        {KEY_ONE, pockets[0]},
-        {KEY_TWO, pockets[1]}, {KEY_THREE, pockets[2]}, {KEY_FOUR, pockets[3]},
-    };
+    for (const auto& keybind : keybinds) {
+        if (keybind.bind.is_active() && keybind.condition(*this)) {
+            const auto result = keybind.action(*this);
+            const auto fallthrough = std::holds_alternative<Fallthrough>(result);
 
-    if (IsKeyPressed(KEY_SPACE)) {
-        if (!last_selected.valid()) { // select whatever's on the ground
-            for (const auto& thing : level.things) {
-                const auto drop = dynamic_cast<ItemDrop*>(thing.get());
-
-                if (drop == nullptr) {
-                    continue;
-                }
-
-                if (collides_with(*drop, true)) {
-                    last_selected = drop->internal_slot;
-                    break;
-                }
+            if (!fallthrough) {
+                break;
             }
-        } else if (!last_selected->empty()) { // activate
-            const auto action = last_selected->peek()->activate(*this);
-
-            if (action != nullptr) {
-                ongoing.reset(action);
-            }
-
-            return;
-        } else { // deselect since it's empty anyways
-            last_selected.invalidate();
-            return;
         }
     }
-
-    if (IsKeyPressed(KEY_G) && last_selected.valid() && !last_selected->empty()) {
-        // TODO: drop on the ground.
-        last_selected->trash();
-        last_selected.invalidate();
-        return;
-    }
-
-    for (const auto& pair : item_slots) {
-        if (!IsKeyPressed(pair.first)) {
-            continue;
-        }
-
-        auto slot = pair.second;
-
-        if (last_selected.valid()) {
-            if (last_selected->peek() != nullptr && slot->peek() != nullptr) {
-                const auto action = slot->peek()->insert(*this, last_selected);
-
-                if (action != nullptr) {
-                    ongoing.reset(action);
-                }
-
-                last_selected.invalidate();
-
-                return;
-            } else if (last_selected->peek() != nullptr && slot->peek() == nullptr) {
-                slot->insert(last_selected->take());
-                last_selected.invalidate();
-
-                return;
-            }
-        } else {
-            last_selected = slot;
-            return;
-        }
-    }
-
-    const std::vector<std::pair<MouseButton, HandSlot>> weapon_slots{
-        {MOUSE_BUTTON_LEFT, HandSlot::LEFT},
-        {MOUSE_BUTTON_RIGHT, HandSlot::RIGHT},
-    };
-
-    for (const auto& pair : weapon_slots) {
-        const auto& slot = hand_slot(pair.second);
-        const auto item = slot->peek();
-
-        if (item == nullptr) {
-            continue;
-        }
-
-        const auto weapon = dynamic_cast<AbstractWeapon*>(item);
-
-        if (weapon == nullptr) {
-            continue;
-        }
-
-        if (weapon->turns_until_ready > 0) {
-            continue;
-        }
-
-        if (IsMouseButtonDown(pair.first)) {
-            const auto dest = mouse_to_grid();
-            ongoing.reset(new Shoot(dest, pair.second));
-            last_selected.invalidate();
-            return;
-        }
-    }
-
-    const int movement_length = 8;
-
-    if (IsKeyDown(KEY_A)) {
-        ongoing.reset(new Move(Direction::LEFT, movement_length));
-    } else if (IsKeyDown(KEY_D)) {
-        ongoing.reset(new Move(Direction::RIGHT, movement_length));
-    } else if (IsKeyDown(KEY_W)) {
-        ongoing.reset(new Move(Direction::UP, movement_length));
-    } else if (IsKeyDown(KEY_S)) {
-        ongoing.reset(new Move(Direction::DOWN, movement_length));
-    } else {
-        return;
-    }
-
-    last_selected.invalidate();
 }
 
 std::vector<Thing::Sprite> Player::draw() {

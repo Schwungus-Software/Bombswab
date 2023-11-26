@@ -44,6 +44,7 @@ set(SOURCES
     "src/shoot.cpp"
     "src/humanoid.cpp"
     "src/projectile.cpp"
+    "src/keybinds.cpp"
     "src/misc.cpp"
     "src/main.cpp")
 
@@ -63,6 +64,7 @@ set(HEADERS
     "src/things.hpp"
     "src/level.hpp"
     "src/spritesheets.hpp"
+    "src/keybinds.hpp"
     "src/misc.hpp")
 
 add_executable(${PROJECT_TARGET} ${SOURCES} ${TEMPLATES} ${HEADERS})
