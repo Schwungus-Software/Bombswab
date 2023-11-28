@@ -20,15 +20,13 @@ jobs:
           sudo apt update
           sudo apt install python3 cmake emscripten
       - name: Configure
-        run: emcmake cmake -DPLATFORM=Web -B build -S ${{github.workspace}}
+        run: emcmake cmake -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -B build -S ${{github.workspace}}
       - name: Build with CMake
         run: cmake --build build -j 4
       - name: Create output dir
         run: mkdir _site
-      - name: Add index.html
-        run: mv build/Bombswab.html _site/index.html
-      - name: Move the rest of the files
-        run: mv build/Bombswab.data build/Bombswab.wasm build/Bombswab.js _site/
+      - name: Move the files
+        run: mv build/index.html build/Bombswab.data build/Bombswab.wasm build/Bombswab.js _site/
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v2
         with:

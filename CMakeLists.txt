@@ -9,8 +9,6 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/raysan5/raylib.git
   GIT_TAG 5.0)
 
-FetchContent_MakeAvailable(raylib)
-
 set(PROJECT_TARGET ${PROJECT_NAME})
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -24,6 +22,7 @@ if(EMSCRIPTEN)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WEB_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WEB_FLAGS}")
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
+  file(COPY "${CMAKE_SOURCE_DIR}/index.html" DESTINATION "${CMAKE_BINARY_DIR}")
 endif()
 
 set(SOURCES
@@ -66,6 +65,8 @@ set(HEADERS
     "src/spritesheets.hpp"
     "src/keybinds.hpp"
     "src/misc.hpp")
+
+FetchContent_MakeAvailable(raylib)
 
 add_executable(${PROJECT_TARGET} ${SOURCES} ${TEMPLATES} ${HEADERS})
 target_link_libraries(${PROJECT_TARGET} raylib)
