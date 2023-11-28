@@ -3,8 +3,7 @@ name: Continuous integration
 on:
   push:
     branches: [deploy]
-  pull_request:
-    branches: [deploy]
+  workflow_dispatch:
 
 jobs:
   build-emscripten:
@@ -18,11 +17,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install python3 cmake emscripten
-      - name: Configure
-        run: emcmake cmake -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -B build -S ${{github.workspace}}
-      - name: Build with CMake
-        run: cmake --build build -j 4
+          sudo apt install python3 cmake emscripten ninja-build
+      - name: Build
+        run: |
+          mkdir -p build
+          cd build
+          emcmake cmake -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -B . -S ${{github.workspace}} -G Ninja
+          ninja
+          cd ..
       - name: Create output dir
         run: mkdir _site
       - name: Move the files
