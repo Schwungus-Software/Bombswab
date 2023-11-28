@@ -1,0 +1,49 @@
+name: Upload to https://bombswab.schwungus.software
+
+on:
+  push:
+    branches: [deploy]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build the HTML5 version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install python3 cmake emscripten ninja-build
+      - name: Build
+        run: |
+          mkdir -p build
+          cd build
+          emcmake cmake -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -B . -S ${{github.workspace}} -G Ninja
+          ninja
+          cd ..
+      - name: Create output dir
+        run: mkdir _site
+      - name: Move the files
+        run: mv build/index.html build/Bombswab.data build/Bombswab.wasm build/Bombswab.js _site/
+      - name: Upload artifacts
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: _site
+  deploy:
+    name: Deploy HTML5 to GitHub Pages
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
