@@ -17,13 +17,13 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install python3 cmake emscripten ninja-build
+          sudo apt install python3 cmake emscripten nodejs htmlmin ninja-build
       - name: Build
         run: |
           mkdir -p build
           cd build
           emcmake cmake -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -B . -S ${{github.workspace}} -G Ninja
-          ninja
+          emcmake cmake --build .
           cd ..
       - name: Create output dir
         run: mkdir _site

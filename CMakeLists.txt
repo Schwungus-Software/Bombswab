@@ -17,8 +17,7 @@ file(COPY "${CMAKE_SOURCE_DIR}/assets" DESTINATION "${CMAKE_BINARY_DIR}")
 
 if(EMSCRIPTEN)
   set(WEB_FLAGS
-      "--preload-file ${CMAKE_SOURCE_DIR}/assets@assets/ -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1 -s ASYNCIFY"
-  )
+      "--preload-file assets/ -s USE_GLFW=3 -s ASSERTIONS=1 -s WASM=1")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${WEB_FLAGS}")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WEB_FLAGS}")
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
