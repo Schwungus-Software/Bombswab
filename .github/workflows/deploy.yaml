@@ -23,12 +23,14 @@ jobs:
           mkdir -p build
           cd build
           emcmake cmake -DPLATFORM=Web -DCMAKE_BUILD_TYPE=Release -B . -S ${{github.workspace}} -G Ninja
-          emcmake cmake --build .
+          cmake --build . -j 4
           cd ..
-      - name: Create output dir
-        run: mkdir _site
       - name: Move the files
-        run: mv build/index.html build/Bombswab.data build/Bombswab.wasm build/Bombswab.js _site/
+        run: |
+          mkdir _site
+          cd build
+          mv index.html Bombswab.data Bombswab.wasm Bombswab.js ../_site/
+          cd ..
       - name: Upload artifacts
         uses: actions/upload-pages-artifact@v2
         with:
